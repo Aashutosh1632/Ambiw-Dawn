@@ -137,9 +137,11 @@
         "category_ge4kkU": {
           "type": "category",
           "settings": {
-            "title": "",
+            "image": "shopify://shop_images/Gardening_2_8f3b2f05-2748-48a1-b787-1466e0c4a47d.png",
+            "mobile_image": "shopify://shop_images/Gardening_2_8f3b2f05-2748-48a1-b787-1466e0c4a47d.png",
+            "title": "Gardening",
             "title_color": "",
-            "collection": "",
+            "collection": "gardening",
             "link": "",
             "hide_on_mobile": false,
             "hide_on_desktop": false
