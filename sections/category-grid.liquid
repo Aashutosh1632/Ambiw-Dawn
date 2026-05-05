@@ -1,0 +1,338 @@
+{%- liquid
+  assign columns_desktop = section.settings.columns_desktop | default: 6
+  assign columns_mobile_int = section.settings.columns_mobile | plus: 0
+-%}
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --cg-cols-d: {{ columns_desktop }};
+    --cg-cols-m: {{ columns_mobile_int }};
+    --cg-pad-t: {{ section.settings.padding_top }}px;
+    --cg-pad-b: {{ section.settings.padding_bottom }}px;
+  }
+  .category-grid-section {
+    padding: var(--cg-pad-t) 16px var(--cg-pad-b);
+    box-sizing: border-box;
+  }
+  .category-grid-title {
+    text-align: center;
+    margin: 0 0 24px;
+    {% if section.settings.title_color != blank %}color: {{ section.settings.title_color }};{% endif %}
+  }
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--cg-cols-m), minmax(0, 1fr));
+    gap: 16px;
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 1400px;
+  }
+  @media (min-width: 750px) {
+    .category-grid {
+      grid-template-columns: repeat(var(--cg-cols-d), minmax(0, 1fr));
+      gap: 20px;
+    }
+  }
+  .category-grid__item { margin: 0; }
+  .category-grid__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+  .category-grid__media {
+    display: block;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+  }
+  .category-grid__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .category-grid__title {
+    text-align: center;
+    margin: 8px 0 0;
+    font-size: 14px;
+    line-height: 1.3;
+    word-break: break-word;
+  }
+  .category-grid__item--hide-mobile { display: none; }
+  @media (min-width: 750px) {
+    .category-grid__item--hide-mobile { display: block; }
+    .category-grid__item--hide-desktop { display: none; }
+  }
+{%- endstyle -%}
+
+<section class="category-grid-section{% if section.settings.custom_class != blank %} {{ section.settings.custom_class }}{% endif %}">
+  {%- if section.settings.title != blank -%}
+    <h2 class="category-grid-title {{ section.settings.heading_size }}">
+      {{ section.settings.title }}
+    </h2>
+  {%- endif -%}
+
+  <ul class="category-grid" role="list">
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign desktop_image = block.settings.image
+        assign mobile_image = block.settings.mobile_image
+        if mobile_image == blank
+          assign mobile_image = desktop_image
+        endif
+
+        assign block_link = block.settings.link
+        if block_link == blank and block.settings.collection != blank
+          assign block_link = block.settings.collection.url
+        endif
+
+        assign block_title = block.settings.title
+        if block_title == blank and block.settings.collection != blank
+          assign block_title = block.settings.collection.title
+        endif
+
+        assign hide_class = ''
+        if block.settings.hide_on_mobile
+          assign hide_class = hide_class | append: ' category-grid__item--hide-mobile'
+        endif
+        if block.settings.hide_on_desktop
+          assign hide_class = hide_class | append: ' category-grid__item--hide-desktop'
+        endif
+
+        assign is_first_row = false
+        if section.settings.eager_first_row and forloop.index <= columns_desktop
+          assign is_first_row = true
+        endif
+
+        assign img_loading = 'lazy'
+        assign img_priority = 'auto'
+        if is_first_row
+          assign img_loading = 'eager'
+          assign img_priority = 'high'
+        endif
+
+        assign img_alt = desktop_image.alt | default: block_title | default: shop.name | escape
+      -%}
+
+      <li class="category-grid__item{{ hide_class }}" {{ block.shopify_attributes }}>
+        {%- if block_link != blank -%}
+          <a class="category-grid__link" href="{{ block_link }}">
+        {%- else -%}
+          <div class="category-grid__link">
+        {%- endif -%}
+
+          {%- if desktop_image != blank or mobile_image != blank -%}
+            <span class="category-grid__media">
+              <picture>
+                {%- if mobile_image != blank and mobile_image != desktop_image -%}
+                  <source media="(max-width: 749px)"
+                          srcset="{{ mobile_image | image_url: width: 200 }} 200w, {{ mobile_image | image_url: width: 300 }} 300w, {{ mobile_image | image_url: width: 400 }} 400w"
+                          sizes="calc(100vw / {{ columns_mobile_int }})"
+                          width="{{ mobile_image.width }}"
+                          height="{{ mobile_image.height }}">
+                {%- endif -%}
+                {%- if desktop_image != blank -%}
+                  <img src="{{ desktop_image | image_url: width: 300 }}"
+                       srcset="{{ desktop_image | image_url: width: 200 }} 200w, {{ desktop_image | image_url: width: 300 }} 300w, {{ desktop_image | image_url: width: 400 }} 400w"
+                       sizes="(min-width: 750px) calc(100vw / {{ columns_desktop }}), calc(100vw / {{ columns_mobile_int }})"
+                       width="{{ desktop_image.width }}"
+                       height="{{ desktop_image.height }}"
+                       alt="{{ img_alt }}"
+                       loading="{{ img_loading }}"
+                       fetchpriority="{{ img_priority }}"
+                       decoding="async">
+                {%- else -%}
+                  <img src="{{ mobile_image | image_url: width: 300 }}"
+                       width="{{ mobile_image.width }}"
+                       height="{{ mobile_image.height }}"
+                       alt="{{ img_alt }}"
+                       loading="{{ img_loading }}"
+                       fetchpriority="{{ img_priority }}"
+                       decoding="async">
+                {%- endif -%}
+              </picture>
+            </span>
+          {%- endif -%}
+
+          {%- if block_title != blank -%}
+            <p class="category-grid__title"{% if block.settings.title_color != blank %} style="color: {{ block.settings.title_color }};"{% endif %}>
+              {{ block_title }}
+            </p>
+          {%- endif -%}
+
+        {%- if block_link != blank -%}
+          </a>
+        {%- else -%}
+          </div>
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+</section>
+
+{% schema %}
+{
+  "name": "Category Grid",
+  "tag": "section",
+  "class": "section section-category-grid",
+  "max_blocks": 24,
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "Heading",
+      "default": "Top Categories"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "h2", "label": "Small" },
+        { "value": "h1", "label": "Medium" },
+        { "value": "h0", "label": "Large" }
+      ],
+      "default": "h1",
+      "label": "Heading size"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Heading color"
+    },
+    {
+      "type": "text",
+      "id": "custom_class",
+      "label": "Custom class (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 6,
+      "label": "Columns on desktop"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" },
+        { "value": "5", "label": "5" },
+        { "value": "6", "label": "6" }
+      ],
+      "default": "4",
+      "label": "Columns on mobile"
+    },
+    {
+      "type": "header",
+      "content": "Performance"
+    },
+    {
+      "type": "checkbox",
+      "id": "eager_first_row",
+      "default": false,
+      "label": "Eager-load first row",
+      "info": "Enable only when this section is above the fold (improves LCP)."
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 24
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image (desktop)"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "Image (mobile)",
+          "info": "Optional. Falls back to the desktop image when blank."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "info": "Falls back to the linked collection's title when blank."
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Title color"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link override",
+          "info": "Used instead of the collection's URL when set."
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_on_mobile",
+          "default": false,
+          "label": "Hide on mobile"
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_on_desktop",
+          "default": false,
+          "label": "Hide on desktop"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category Grid",
+      "blocks": [
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" }
+      ]
+    }
+  ]
+}
+{% endschema %}
