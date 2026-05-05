@@ -74,9 +74,9 @@
           "settings": {
             "image": "shopify://shop_images/New_Arrivals_3.png",
             "mobile_image": "shopify://shop_images/New_Arrivals_3.png",
-            "title": "",
+            "title": "New Arrivals",
             "title_color": "",
-            "collection": "",
+            "collection": "just-arrived",
             "link": "",
             "hide_on_mobile": false,
             "hide_on_desktop": false
