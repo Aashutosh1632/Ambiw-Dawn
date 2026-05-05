@@ -12,44 +12,60 @@
     "featured_cards_carousel_tENHLw": {
       "type": "Featured-Cards-Carousel",
       "blocks": {
-        "card_b9NEAq": {
+        "card_4H7UUx": {
           "type": "card",
           "settings": {
-            "mobile_image": "shopify://shop_images/30-02-26_salary_1_843ff489-7c59-435f-b75e-af2e4b0e4382.png",
-            "link": ""
+            "image": "shopify://shop_images/30-02-26_salary_1_843ff489-7c59-435f-b75e-af2e4b0e4382.png",
+            "mobile_image": "shopify://shop_images/salary-_m_1_21c96de0-1382-4f76-97d0-74b0293e2cdc.png",
+            "link": "shopify://collections/salary-day"
           }
         },
-        "card_nRxRmr": {
+        "card_QVhECm": {
           "type": "card",
           "settings": {
-            "link": ""
+            "image": "shopify://shop_images/WhatsApp_Image_2026-04-24_at_5.54.21_PM_1_1.jpg",
+            "mobile_image": "shopify://shop_images/WhatsApp_Image_2026-04-24_at_5.54.21_PM_2.jpg",
+            "link": "shopify://collections/mother-gifts"
           }
         },
-        "card_cPDa9N": {
+        "card_jfmkTe": {
           "type": "card",
           "settings": {
-            "link": ""
+            "image": "shopify://shop_images/kitchen_10.png",
+            "mobile_image": "shopify://shop_images/kitchen-_m_2.png",
+            "link": "shopify://collections/kitchen"
           }
         },
-        "card_F9HtUM": {
+        "card_jQYbT7": {
           "type": "card",
           "settings": {
-            "link": ""
+            "image": "shopify://shop_images/2-05-26_summer_1.png",
+            "mobile_image": "shopify://shop_images/summer-_m_11_1.png",
+            "link": "shopify://collections/summer-essential-products"
+          }
+        },
+        "card_xzkfKe": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/Kids_1_1_1.png",
+            "mobile_image": "shopify://shop_images/kids-_m_1_1_1.png",
+            "link": "shopify://collections/toys-games"
           }
         }
       },
       "block_order": [
-        "card_b9NEAq",
-        "card_nRxRmr",
-        "card_cPDa9N",
-        "card_F9HtUM"
+        "card_4H7UUx",
+        "card_QVhECm",
+        "card_jfmkTe",
+        "card_jQYbT7",
+        "card_xzkfKe"
       ],
       "name": "Featured Cards Carousel",
       "settings": {
-        "custom_class": "",
-        "order_no": ""
+        "custom_class": "main-slideshow-banner",
+        "order_no": "4"
       }
-    }
+    },
   },
   "order": [
     "featured_cards_carousel_tENHLw"
