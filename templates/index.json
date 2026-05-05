@@ -124,9 +124,11 @@
         "category_VmydXJ": {
           "type": "category",
           "settings": {
-            "title": "",
+            "image": "shopify://shop_images/Car_Motorbike_1.png",
+            "mobile_image": "shopify://shop_images/Car_Motorbike_1.png",
+            "title": "Car & Motorbike",
             "title_color": "",
-            "collection": "",
+            "collection": "car-motorbike",
             "link": "",
             "hide_on_mobile": false,
             "hide_on_desktop": false
