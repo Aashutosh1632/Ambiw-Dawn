@@ -85,9 +85,11 @@
         "category_UnJCL8": {
           "type": "category",
           "settings": {
-            "title": "",
+            "image": "shopify://shop_images/summer_collection_1_d2253e3a-180a-496d-8ec9-c77d75c2acfd.png",
+            "mobile_image": "shopify://shop_images/summer_collection_1_d2253e3a-180a-496d-8ec9-c77d75c2acfd.png",
+            "title": "Summer",
             "title_color": "",
-            "collection": "",
+            "collection": "summer-essential-products",
             "link": "",
             "hide_on_mobile": false,
             "hide_on_desktop": false
