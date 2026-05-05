@@ -175,9 +175,11 @@
         "category_rgeKGG": {
           "type": "category",
           "settings": {
-            "title": "",
+            "image": "shopify://shop_images/Electronics_2_1.png",
+            "mobile_image": "shopify://shop_images/Electronics_2_1.png",
+            "title": "Electronics",
             "title_color": "",
-            "collection": "",
+            "collection": "electronics-t",
             "link": "",
             "hide_on_mobile": false,
             "hide_on_desktop": false
@@ -186,9 +188,11 @@
         "category_FPirkw": {
           "type": "category",
           "settings": {
-            "title": "",
+            "image": "shopify://shop_images/Home_Essentials_4.png",
+            "mobile_image": "shopify://shop_images/Home_Essentials_4.png",
+            "title": "Home Essentials",
             "title_color": "",
-            "collection": "",
+            "collection": "home-essentials",
             "link": "",
             "hide_on_mobile": false,
             "hide_on_desktop": false
@@ -197,9 +201,11 @@
         "category_qA3GBW": {
           "type": "category",
           "settings": {
-            "title": "",
+            "image": "shopify://shop_images/Kids_Baby_2.png",
+            "mobile_image": "shopify://shop_images/Kids_Baby_2.png",
+            "title": "Kids & Baby",
             "title_color": "",
-            "collection": "",
+            "collection": "kids-baby-essentials",
             "link": "",
             "hide_on_mobile": false,
             "hide_on_desktop": false
@@ -208,9 +214,11 @@
         "category_FmnPkA": {
           "type": "category",
           "settings": {
-            "title": "",
+            "image": "shopify://shop_images/Health_Beauty_2.png",
+            "mobile_image": "shopify://shop_images/Health_Beauty_2.png",
+            "title": "Health & Beauty",
             "title_color": "",
-            "collection": "",
+            "collection": "beauty-health-grocery",
             "link": "",
             "hide_on_mobile": false,
             "hide_on_desktop": false
