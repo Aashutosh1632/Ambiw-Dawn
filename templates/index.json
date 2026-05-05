@@ -146,6 +146,75 @@
             "hide_on_mobile": false,
             "hide_on_desktop": false
           }
+        },
+        "category_d9cxtV": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/Jewellery_3f9cddb3-7ae9-4065-a51e-b09b2057d8f7.png",
+            "mobile_image": "shopify://shop_images/Jewellery_3f9cddb3-7ae9-4065-a51e-b09b2057d8f7.png",
+            "title": "Jewellery",
+            "title_color": "",
+            "collection": "jewellery",
+            "link": "",
+            "hide_on_mobile": false,
+            "hide_on_desktop": false
+          }
+        },
+        "category_BQF69D": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/Gifts_1_bc64900b-8d29-4c32-8f47-c4ec19ac1a77.png",
+            "title": "Gifts",
+            "title_color": "",
+            "collection": "gift",
+            "link": "",
+            "hide_on_mobile": false,
+            "hide_on_desktop": false
+          }
+        },
+        "category_rgeKGG": {
+          "type": "category",
+          "settings": {
+            "title": "",
+            "title_color": "",
+            "collection": "",
+            "link": "",
+            "hide_on_mobile": false,
+            "hide_on_desktop": false
+          }
+        },
+        "category_FPirkw": {
+          "type": "category",
+          "settings": {
+            "title": "",
+            "title_color": "",
+            "collection": "",
+            "link": "",
+            "hide_on_mobile": false,
+            "hide_on_desktop": false
+          }
+        },
+        "category_qA3GBW": {
+          "type": "category",
+          "settings": {
+            "title": "",
+            "title_color": "",
+            "collection": "",
+            "link": "",
+            "hide_on_mobile": false,
+            "hide_on_desktop": false
+          }
+        },
+        "category_FmnPkA": {
+          "type": "category",
+          "settings": {
+            "title": "",
+            "title_color": "",
+            "collection": "",
+            "link": "",
+            "hide_on_mobile": false,
+            "hide_on_desktop": false
+          }
         }
       },
       "block_order": [
@@ -154,7 +223,13 @@
         "category_eNbVi3",
         "category_BwFH7C",
         "category_VmydXJ",
-        "category_ge4kkU"
+        "category_ge4kkU",
+        "category_d9cxtV",
+        "category_BQF69D",
+        "category_rgeKGG",
+        "category_FPirkw",
+        "category_qA3GBW",
+        "category_FmnPkA"
       ],
       "name": "Category Grid",
       "settings": {
