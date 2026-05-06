@@ -71,6 +71,7 @@
         "wishlist_link": "",
         "wishlist_count": "",
         "show_cart": true,
+        "cart_action": "drawer",
         "background_color": "#0d1627",
         "text_color": "#ffffff",
         "accent_color": "#ef3639",
@@ -78,11 +79,29 @@
         "search_text_color": "#161616",
         "padding_vertical": 12
       }
+    },
+    "custom_nav_6jqjGi": {
+      "type": "custom-nav",
+      "name": "Custom nav",
+      "settings": {
+        "menu": "new-menu-pcg",
+        "highlighted_titles": "",
+        "show_hamburger": true,
+        "sticky": false,
+        "background_color": "#0d1627",
+        "text_color": "#ffffff",
+        "accent_color": "#ef3639",
+        "mega_bg_color": "#ffffff",
+        "mega_text_color": "#161616",
+        "mega_active_bg_color": "#fde8e9",
+        "padding_vertical": 4
+      }
     }
   },
   "order": [
     "utility_bar_kHyebD",
     "header",
-    "custom_header_CMBbbG"
+    "custom_header_CMBbbG",
+    "custom_nav_6jqjGi"
   ]
 }
