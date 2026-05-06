@@ -1,9 +1,61 @@
+{%- if section.settings.enable_seo_schema -%}
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "Organization",
+      "name": {{ shop.name | json }},
+      {% if settings.logo %}
+        "logo": {{ settings.logo | image_url: width: 500 | prepend: "https:" | json }},
+      {% endif %}
+      "sameAs": [
+        {{ settings.social_twitter_link | json }},
+        {{ settings.social_facebook_link | json }},
+        {{ settings.social_pinterest_link | json }},
+        {{ settings.social_instagram_link | json }},
+        {{ settings.social_tiktok_link | json }},
+        {{ settings.social_tumblr_link | json }},
+        {{ settings.social_snapchat_link | json }},
+        {{ settings.social_youtube_link | json }},
+        {{ settings.social_vimeo_link | json }}
+      ],
+      "url": {{ request.origin | append: page.url | json }}
+    }
+  </script>
+
+  {%- if request.page_type == 'index' -%}
+    {% assign potential_action_target = request.origin | append: routes.search_url | append: '?q={search_term_string}' %}
+    <script type="application/ld+json">
+      {
+        "@context": "http://schema.org",
+        "@type": "WebSite",
+        "name": {{ shop.name | json }},
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {{ potential_action_target | json }},
+          "query-input": "required name=search_term_string"
+        },
+        "url": {{ request.origin | append: page.url | json }}
+      }
+    </script>
+  {%- endif -%}
+{%- endif -%}
+
 {%- liquid
   assign logo_image = section.settings.logo
   assign show_search = section.settings.show_search
   assign show_wishlist = section.settings.show_wishlist
   assign show_cart = section.settings.show_cart
   assign show_account = section.settings.show_account
+  assign mobile_menu = linklists[section.settings.mobile_menu]
+  assign show_hamburger = section.settings.show_hamburger
+  assign gp_image = section.settings.mobile_gp_image
+  assign as_image = section.settings.mobile_as_image
+  assign show_mobile_app_badges = false
+  if section.settings.show_mobile_app_badges
+    if gp_image != blank or as_image != blank
+      assign show_mobile_app_badges = true
+    endif
+  endif
 -%}
 
 {%- style -%}
@@ -57,6 +109,7 @@
     border-radius: 4px;
     overflow: hidden;
     min-width: 0;
+    min-height: 40px;
   }
   .ds-header__search-input {
     flex: 1 1 auto;
@@ -85,6 +138,7 @@
     border: 0;
     margin: 0;
     padding: 0 18px;
+    min-width: 56px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -93,6 +147,7 @@
     line-height: 1;
     -webkit-appearance: none;
     appearance: none;
+    align-self: stretch;
   }
   .ds-header__search-btn:hover { filter: brightness(1.08); }
   .ds-header__search-btn svg { width: 18px; height: 18px; }
@@ -149,16 +204,178 @@
   }
   @media (max-width: 749px) {
     .ds-header__inner { flex-wrap: wrap; gap: 10px; }
-    .ds-header__logo { flex: 1 1 auto; }
+    .ds-header__hamburger { order: 0; }
+    .ds-header__logo { flex: 1 1 auto; order: 1; justify-content: center; text-align: center; }
+    .ds-header__logo img { margin-inline: auto; }
     .ds-header__icons { gap: 14px; order: 2; }
     .ds-header__search { order: 3; flex-basis: 100%; }
+    .ds-header__app-badges { order: 4; flex-basis: 100%; }
     .ds-header__search-input { padding: 8px 12px; }
     .ds-header__search-btn { padding: 0 14px; }
+  }
+
+  /* Hamburger button (mobile only by default) */
+  .ds-header__hamburger {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    border-radius: 4px;
+    flex: 0 0 40px;
+  }
+  .ds-header__hamburger:hover { background: rgba(255,255,255,0.08); }
+  .ds-header__hamburger svg { width: 24px; height: 24px; }
+  @media (max-width: 989px) {
+    .ds-header__hamburger { display: inline-flex; }
+  }
+
+  /* Mobile app badges row */
+  .ds-header__app-badges {
+    display: none;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+  }
+  @media (max-width: 749px) {
+    .ds-header__app-badges { display: flex; }
+  }
+  .ds-header__app-badges a { display: inline-flex; }
+  .ds-header__app-badges img {
+    height: {{ section.settings.mobile_app_badge_height | default: 36 }}px;
+    width: auto;
+    display: block;
+  }
+
+  /* Mobile drawer */
+  .ds-mobile-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+  }
+  .ds-mobile-drawer__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    transition: opacity .28s ease;
+    pointer-events: none;
+  }
+  .ds-mobile-drawer__panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(85vw, 360px);
+    background: #fff;
+    color: #161616;
+    transform: translateX(-100%);
+    transition: transform .28s ease;
+    overflow-y: auto;
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .ds-mobile-drawer.is-open { pointer-events: auto; }
+  .ds-mobile-drawer.is-open .ds-mobile-drawer__overlay { opacity: 1; pointer-events: auto; }
+  .ds-mobile-drawer.is-open .ds-mobile-drawer__panel { transform: translateX(0); }
+
+  .ds-mobile-drawer__close {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    border: 0;
+    width: 100%;
+    text-align: right;
+    padding: 14px 16px;
+    cursor: pointer;
+    color: inherit;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    z-index: 1;
+  }
+  .ds-mobile-drawer__close svg { width: 24px; height: 24px; }
+  .ds-mobile-drawer__list,
+  .ds-mobile-drawer__sublist,
+  .ds-mobile-drawer__subsublist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .ds-mobile-drawer__item { border-bottom: 1px solid rgba(0,0,0,0.06); }
+  .ds-mobile-drawer details > summary,
+  .ds-mobile-drawer__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    color: inherit;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+  .ds-mobile-drawer details > summary::-webkit-details-marker { display: none; }
+  .ds-mobile-drawer details > summary::marker { content: ''; }
+  .ds-mobile-drawer__chev {
+    width: 14px;
+    height: 14px;
+    transition: transform .18s;
+  }
+  .ds-mobile-drawer details[open] > summary > .ds-mobile-drawer__chev { transform: rotate(180deg); }
+  .ds-mobile-drawer__sublist {
+    background: rgba(0,0,0,0.03);
+    padding-left: 12px;
+  }
+  .ds-mobile-drawer__sublist > li { border-top: 1px solid rgba(0,0,0,0.05); }
+  .ds-mobile-drawer__sublink,
+  .ds-mobile-drawer__sublist a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    color: inherit;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .ds-mobile-drawer__subsublist {
+    background: rgba(0,0,0,0.05);
+    padding-left: 12px;
+  }
+  .ds-mobile-drawer__subsublist > li { border-top: 1px solid rgba(0,0,0,0.05); }
+  .ds-mobile-drawer__subsublist a {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 400;
+    display: block;
+    color: inherit;
+    text-decoration: none;
   }
 {%- endstyle -%}
 
 <div class="ds-header">
   <div class="ds-header__inner page-width">
+
+    {%- if show_hamburger -%}
+      <button type="button"
+              class="ds-header__hamburger"
+              aria-label="Open menu"
+              aria-expanded="false"
+              aria-controls="ds-header-drawer-{{ section.id }}"
+              data-drawer-open>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
+        </svg>
+      </button>
+    {%- endif -%}
 
     {%- comment -%} Logo {%- endcomment -%}
     <a href="{{ routes.root_url }}" class="ds-header__logo" aria-label="{{ shop.name | escape }}">
@@ -253,8 +470,131 @@
 
     </div>
 
+    {%- if show_mobile_app_badges -%}
+      <div class="ds-header__app-badges">
+        {%- if gp_image != blank -%}
+          <a href="{{ section.settings.mobile_gp_link | default: '#' }}"
+             {% if section.settings.mobile_app_links_new_tab %}target="_blank" rel="noopener"{% endif %}
+             aria-label="Get it on Google Play">
+            <img src="{{ gp_image | image_url: width: 280 }}"
+                 width="{{ gp_image.width }}"
+                 height="{{ gp_image.height }}"
+                 alt="Get it on Google Play"
+                 loading="lazy"
+                 decoding="async">
+          </a>
+        {%- endif -%}
+        {%- if as_image != blank -%}
+          <a href="{{ section.settings.mobile_as_link | default: '#' }}"
+             {% if section.settings.mobile_app_links_new_tab %}target="_blank" rel="noopener"{% endif %}
+             aria-label="Download on the App Store">
+            <img src="{{ as_image | image_url: width: 280 }}"
+                 width="{{ as_image.width }}"
+                 height="{{ as_image.height }}"
+                 alt="Download on the App Store"
+                 loading="lazy"
+                 decoding="async">
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
   </div>
 </div>
+
+{%- if show_hamburger and mobile_menu != blank and mobile_menu.links.size > 0 -%}
+  <div class="ds-mobile-drawer"
+       id="ds-header-drawer-{{ section.id }}"
+       data-drawer
+       hidden>
+    <div class="ds-mobile-drawer__overlay" data-drawer-close></div>
+    <div class="ds-mobile-drawer__panel" role="dialog" aria-modal="true" aria-label="Menu">
+      <button type="button" class="ds-mobile-drawer__close" aria-label="Close menu" data-drawer-close>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="m6 6 12 12M6 18 18 6"/>
+        </svg>
+      </button>
+      <ul class="ds-mobile-drawer__list">
+        {%- for link in mobile_menu.links -%}
+          <li class="ds-mobile-drawer__item">
+            {%- if link.links.size > 0 -%}
+              <details>
+                <summary>
+                  <span>{{ link.title | escape }}</span>
+                  <svg class="ds-mobile-drawer__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m6 9 6 6 6-6"/>
+                  </svg>
+                </summary>
+                <ul class="ds-mobile-drawer__sublist">
+                  {%- for sub in link.links -%}
+                    <li>
+                      {%- if sub.links.size > 0 -%}
+                        <details>
+                          <summary class="ds-mobile-drawer__sublink">
+                            <span>{{ sub.title | escape }}</span>
+                            <svg class="ds-mobile-drawer__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                              <path d="m6 9 6 6 6-6"/>
+                            </svg>
+                          </summary>
+                          <ul class="ds-mobile-drawer__subsublist">
+                            {%- for grand in sub.links -%}
+                              <li><a href="{{ grand.url }}">{{ grand.title | escape }}</a></li>
+                            {%- endfor -%}
+                          </ul>
+                        </details>
+                      {%- else -%}
+                        <a href="{{ sub.url }}" class="ds-mobile-drawer__sublink">{{ sub.title | escape }}</a>
+                      {%- endif -%}
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              </details>
+            {%- else -%}
+              <a href="{{ link.url }}" class="ds-mobile-drawer__link">{{ link.title | escape }}</a>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var section = document.getElementById('shopify-section-{{ section.id }}');
+      if (!section || section.dataset.drawerBound) return;
+      section.dataset.drawerBound = '1';
+
+      var drawer = section.querySelector('[data-drawer]');
+      var opener = section.querySelector('[data-drawer-open]');
+      var closers = section.querySelectorAll('[data-drawer-close]');
+      if (!drawer || !opener) return;
+
+      function openDrawer() {
+        opener.setAttribute('aria-expanded', 'true');
+        drawer.removeAttribute('hidden');
+        // Force layout, then add class to trigger transition
+        void drawer.offsetWidth;
+        drawer.classList.add('is-open');
+        document.documentElement.style.overflow = 'hidden';
+      }
+      function closeDrawer() {
+        if (!drawer.classList.contains('is-open')) return;
+        opener.setAttribute('aria-expanded', 'false');
+        drawer.classList.remove('is-open');
+        document.documentElement.style.overflow = '';
+        setTimeout(function () {
+          if (!drawer.classList.contains('is-open')) drawer.setAttribute('hidden', '');
+        }, 300);
+      }
+
+      opener.addEventListener('click', openDrawer);
+      closers.forEach(function (el) { el.addEventListener('click', closeDrawer); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeDrawer();
+      });
+    })();
+  </script>
+{%- endif -%}
 
 {% schema %}
 {
@@ -265,6 +605,17 @@
     "groups": ["header"]
   },
   "settings": [
+    {
+      "type": "header",
+      "content": "SEO"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_seo_schema",
+      "default": true,
+      "label": "Add Organization & WebSite JSON-LD",
+      "info": "Outputs schema.org structured data for SEO. Disable if your theme already does this elsewhere."
+    },
     {
       "type": "header",
       "content": "Logo"
@@ -354,6 +705,70 @@
       "id": "wishlist_count",
       "label": "Wishlist count badge",
       "info": "Optional static count. Leave blank or use '0' to hide the badge."
+    },
+    {
+      "type": "header",
+      "content": "Mobile menu (hamburger drawer)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hamburger",
+      "default": true,
+      "label": "Show hamburger button on mobile",
+      "info": "Disables the hamburger inside Custom nav — leave that one off to avoid duplicates."
+    },
+    {
+      "type": "link_list",
+      "id": "mobile_menu",
+      "default": "main-menu",
+      "label": "Drawer menu",
+      "info": "Up to 3 levels of nesting. Can be the same as the desktop nav or a different menu."
+    },
+    {
+      "type": "header",
+      "content": "Mobile app badges (below search)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_mobile_app_badges",
+      "default": true,
+      "label": "Show app badges below search on mobile"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_gp_image",
+      "label": "Google Play badge"
+    },
+    {
+      "type": "url",
+      "id": "mobile_gp_link",
+      "label": "Google Play link"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_as_image",
+      "label": "App Store badge"
+    },
+    {
+      "type": "url",
+      "id": "mobile_as_link",
+      "label": "App Store link"
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_app_links_new_tab",
+      "default": true,
+      "label": "Open app links in a new tab"
+    },
+    {
+      "type": "range",
+      "id": "mobile_app_badge_height",
+      "min": 24,
+      "max": 56,
+      "step": 2,
+      "default": 36,
+      "unit": "px",
+      "label": "App badge height (mobile)"
     },
     {
       "type": "header",
