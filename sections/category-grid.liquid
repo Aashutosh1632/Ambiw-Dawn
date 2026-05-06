@@ -62,6 +62,26 @@
     .category-grid__item--hide-mobile { display: block; }
     .category-grid__item--hide-desktop { display: none; }
   }
+
+  /* Mobile slider mode (only applies below 750px when toggle is on) */
+  @media (max-width: 749px) {
+    .category-grid--mobile-slider {
+      display: flex;
+      grid-template-columns: none;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: 16px;
+      gap: 12px;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .category-grid--mobile-slider::-webkit-scrollbar { display: none; }
+    .category-grid--mobile-slider .category-grid__item {
+      flex: 0 0 calc((100% - (var(--cg-cols-m) - 1) * 12px) / var(--cg-cols-m));
+      scroll-snap-align: start;
+    }
+  }
 {%- endstyle -%}
 
 <section class="category-grid-section{% if section.settings.custom_class != blank %} {{ section.settings.custom_class }}{% endif %}">
@@ -71,7 +91,7 @@
     </h2>
   {%- endif -%}
 
-  <ul class="category-grid" role="list">
+  <ul class="category-grid{% if section.settings.enable_mobile_slider %} category-grid--mobile-slider{% endif %}" role="list">
     {%- for block in section.blocks -%}
       {%- liquid
         assign desktop_image = block.settings.image
@@ -231,6 +251,13 @@
       ],
       "default": "4",
       "label": "Columns on mobile"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_mobile_slider",
+      "default": false,
+      "label": "Enable horizontal slider on mobile",
+      "info": "When on, mobile shows a swipeable scroll-snap slider instead of a grid. Desktop is unaffected."
     },
     {
       "type": "header",
