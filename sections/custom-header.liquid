@@ -1,0 +1,400 @@
+{%- liquid
+  assign logo_image = section.settings.logo
+  assign show_search = section.settings.show_search
+  assign show_wishlist = section.settings.show_wishlist
+  assign show_cart = section.settings.show_cart
+  assign show_account = section.settings.show_account
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --ch-bg: {{ section.settings.background_color | default: '#0d1627' }};
+    --ch-fg: {{ section.settings.text_color | default: '#ffffff' }};
+    --ch-accent: {{ section.settings.accent_color | default: '#ef3639' }};
+    --ch-search-bg: {{ section.settings.search_bg_color | default: '#ffffff' }};
+    --ch-search-fg: {{ section.settings.search_text_color | default: '#161616' }};
+    --ch-pad-y: {{ section.settings.padding_vertical }}px;
+    --ch-logo-w: {{ section.settings.logo_width }}px;
+  }
+  .ds-header {
+    background: var(--ch-bg);
+    color: var(--ch-fg);
+    padding-block: var(--ch-pad-y);
+    box-sizing: border-box;
+  }
+  .ds-header__inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .ds-header__logo {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .ds-header__logo img {
+    display: block;
+    width: var(--ch-logo-w);
+    height: auto;
+    max-height: 60px;
+    object-fit: contain;
+  }
+  .ds-header__search {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: stretch;
+    background: var(--ch-search-bg);
+    color: var(--ch-search-fg);
+    border-radius: 4px;
+    overflow: hidden;
+    min-width: 0;
+  }
+  .ds-header__search-input {
+    flex: 1 1 auto;
+    border: 0;
+    outline: 0;
+    padding: 10px 16px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    min-width: 0;
+  }
+  .ds-header__search-input::placeholder { color: rgba(0,0,0,0.45); }
+  .ds-header__search-btn {
+    flex: 0 0 auto;
+    background: var(--ch-accent);
+    color: #fff;
+    border: 0;
+    padding: 0 18px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ds-header__search-btn:hover { filter: brightness(1.08); }
+  .ds-header__search-btn svg { width: 18px; height: 18px; }
+  .ds-header__icons {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .ds-header__icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    color: inherit;
+    font-size: 12px;
+    line-height: 1.1;
+  }
+  .ds-header__icon:hover { color: var(--ch-accent); }
+  .ds-header__icon svg {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+  }
+  .ds-header__icon-label {
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+  }
+  .ds-header__chevron { width: 10px; height: 10px; flex: 0 0 10px; }
+  .ds-header__badge {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    background: var(--ch-accent);
+    color: #fff;
+    border-radius: 999px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    box-sizing: border-box;
+  }
+
+  @media (max-width: 989px) {
+    .ds-header__icon-label,
+    .ds-header__chevron { display: none; }
+  }
+  @media (max-width: 749px) {
+    .ds-header__inner { flex-wrap: wrap; gap: 10px; }
+    .ds-header__logo { flex: 1 1 auto; }
+    .ds-header__icons { gap: 14px; order: 2; }
+    .ds-header__search { order: 3; flex-basis: 100%; }
+    .ds-header__search-input { padding: 8px 12px; }
+    .ds-header__search-btn { padding: 0 14px; }
+  }
+{%- endstyle -%}
+
+<div class="ds-header">
+  <div class="ds-header__inner page-width">
+
+    {%- comment -%} Logo {%- endcomment -%}
+    <a href="{{ routes.root_url }}" class="ds-header__logo" aria-label="{{ shop.name | escape }}">
+      {%- if logo_image != blank -%}
+        <img src="{{ logo_image | image_url: width: 320 }}"
+             srcset="{{ logo_image | image_url: width: 160 }} 160w, {{ logo_image | image_url: width: 240 }} 240w, {{ logo_image | image_url: width: 320 }} 320w, {{ logo_image | image_url: width: 480 }} 480w"
+             sizes="{{ section.settings.logo_width }}px"
+             width="{{ logo_image.width }}"
+             height="{{ logo_image.height }}"
+             alt="{{ shop.name | escape }}"
+             loading="eager"
+             fetchpriority="high"
+             decoding="async">
+      {%- else -%}
+        <span>{{ shop.name }}</span>
+      {%- endif -%}
+    </a>
+
+    {%- comment -%} Search {%- endcomment -%}
+    {%- if show_search -%}
+      <form action="{{ routes.search_url }}" method="get" role="search" class="ds-header__search">
+        <input type="hidden" name="type" value="{{ section.settings.search_type }}">
+        <input type="hidden" name="options[prefix]" value="last">
+        <input type="search"
+               name="q"
+               class="ds-header__search-input"
+               placeholder="{{ section.settings.search_placeholder | default: 'Search' }}"
+               aria-label="Search"
+               autocomplete="off"
+               spellcheck="false">
+        <button type="submit" class="ds-header__search-btn" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="m21 21-4.3-4.3"/>
+          </svg>
+        </button>
+      </form>
+    {%- endif -%}
+
+    {%- comment -%} Right-side icons {%- endcomment -%}
+    <div class="ds-header__icons">
+
+      {%- if show_account -%}
+        {%- if customer -%}
+          {%- assign account_url = routes.account_url -%}
+          {%- assign account_aria = 'Account' -%}
+        {%- else -%}
+          {%- assign account_url = routes.account_login_url -%}
+          {%- assign account_aria = 'Sign in' -%}
+        {%- endif -%}
+        <a href="{{ account_url }}" class="ds-header__icon" aria-label="{{ account_aria }}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 21a8 8 0 0 1 16 0"/>
+          </svg>
+          {%- if section.settings.show_account_label -%}
+            <span class="ds-header__icon-label">{{ section.settings.account_label }}</span>
+            <svg class="ds-header__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          {%- endif -%}
+        </a>
+      {%- endif -%}
+
+      {%- if show_wishlist -%}
+        <a href="{{ section.settings.wishlist_link | default: '#' }}" class="ds-header__icon" aria-label="Wishlist">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+          {%- if section.settings.wishlist_count != blank and section.settings.wishlist_count != '0' -%}
+            <span class="ds-header__badge">{{ section.settings.wishlist_count }}</span>
+          {%- endif -%}
+        </a>
+      {%- endif -%}
+
+      {%- if show_cart -%}
+        <a href="{{ routes.cart_url }}" class="ds-header__icon" aria-label="Cart, {{ cart.item_count }} item{% if cart.item_count != 1 %}s{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="9" cy="20" r="1.5"/>
+            <circle cx="18" cy="20" r="1.5"/>
+            <path d="M3 4h2l2.7 12.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.55L21 8H6"/>
+          </svg>
+          {%- if cart.item_count > 0 -%}
+            <span class="ds-header__badge" data-cart-count>{{ cart.item_count }}</span>
+          {%- endif -%}
+        </a>
+      {%- endif -%}
+
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Custom header",
+  "tag": "section",
+  "class": "section section-custom-header",
+  "enabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image",
+      "info": "If empty, the shop name is shown as text."
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 60,
+      "max": 240,
+      "step": 10,
+      "default": 120,
+      "unit": "px",
+      "label": "Logo width"
+    },
+    {
+      "type": "header",
+      "content": "Search"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "default": true,
+      "label": "Show search bar"
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "default": "Search for products",
+      "label": "Search placeholder"
+    },
+    {
+      "type": "select",
+      "id": "search_type",
+      "label": "Search scope",
+      "default": "product",
+      "options": [
+        { "value": "product", "label": "Products only" },
+        { "value": "product,article,page", "label": "Products + articles + pages" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Account"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "default": true,
+      "label": "Show account icon"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account_label",
+      "default": true,
+      "label": "Show label and chevron (desktop)"
+    },
+    {
+      "type": "text",
+      "id": "account_label",
+      "default": "MY ACCOUNT",
+      "label": "Account label"
+    },
+    {
+      "type": "header",
+      "content": "Wishlist"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "default": false,
+      "label": "Show wishlist icon"
+    },
+    {
+      "type": "url",
+      "id": "wishlist_link",
+      "label": "Wishlist link",
+      "info": "Use your wishlist app's URL or page link."
+    },
+    {
+      "type": "text",
+      "id": "wishlist_count",
+      "label": "Wishlist count badge",
+      "info": "Optional static count. Leave blank or use '0' to hide the badge."
+    },
+    {
+      "type": "header",
+      "content": "Cart"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart",
+      "default": true,
+      "label": "Show cart icon"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "default": "#0d1627",
+      "label": "Background"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "default": "#ffffff",
+      "label": "Text & icons"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "default": "#ef3639",
+      "label": "Accent (button & badges)"
+    },
+    {
+      "type": "color",
+      "id": "search_bg_color",
+      "default": "#ffffff",
+      "label": "Search background"
+    },
+    {
+      "type": "color",
+      "id": "search_text_color",
+      "default": "#161616",
+      "label": "Search text"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 12,
+      "unit": "px",
+      "label": "Vertical padding"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom header"
+    }
+  ]
+}
+{% endschema %}
