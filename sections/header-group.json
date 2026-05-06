@@ -76,7 +76,7 @@
       "settings": {
         "menu": "new-menu-pcg",
         "highlighted_titles": "",
-        "show_hamburger": true,
+        "show_hamburger": false,
         "sticky": false,
         "background_color": "#0d1627",
         "text_color": "#ffffff",

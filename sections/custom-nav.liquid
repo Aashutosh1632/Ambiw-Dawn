@@ -16,6 +16,17 @@
     --cn-pad-y: {{ section.settings.padding_vertical }}px;
   }
 
+  {%- comment -%}
+    When the section's hamburger is disabled, the desktop nav list is already
+    hidden on mobile (see media query below) — that leaves an empty dark strip.
+    Hide the whole section root on mobile so it doesn't render anything.
+  {%- endcomment -%}
+  {%- unless section.settings.show_hamburger -%}
+    @media (max-width: 989px) {
+      #shopify-section-{{ section.id }} { display: none; }
+    }
+  {%- endunless -%}
+
   .ds-nav-section,
   .ds-nav-section *,
   .ds-nav-section *::before,
@@ -499,8 +510,9 @@
     {
       "type": "checkbox",
       "id": "show_hamburger",
-      "default": true,
-      "label": "Show hamburger menu on mobile"
+      "default": false,
+      "label": "Show hamburger menu on mobile",
+      "info": "Leave off if the Custom header section already provides a hamburger (recommended)."
     },
     {
       "type": "header",
