@@ -1,0 +1,576 @@
+{%- liquid
+  assign menu_handle = section.settings.menu
+  assign menu = linklists[menu_handle]
+  assign highlighted_raw = section.settings.highlighted_titles | default: ''
+  assign highlighted_list = highlighted_raw | downcase | split: ','
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --cn-bg: {{ section.settings.background_color | default: '#0d1627' }};
+    --cn-fg: {{ section.settings.text_color | default: '#ffffff' }};
+    --cn-accent: {{ section.settings.accent_color | default: '#ef3639' }};
+    --cn-mega-bg: {{ section.settings.mega_bg_color | default: '#ffffff' }};
+    --cn-mega-fg: {{ section.settings.mega_text_color | default: '#161616' }};
+    --cn-mega-active-bg: {{ section.settings.mega_active_bg_color | default: '#fde8e9' }};
+    --cn-pad-y: {{ section.settings.padding_vertical }}px;
+  }
+
+  .ds-nav-section,
+  .ds-nav-section *,
+  .ds-nav-section *::before,
+  .ds-nav-section *::after { box-sizing: border-box; }
+
+  .ds-nav {
+    background: var(--cn-bg);
+    color: var(--cn-fg);
+  }
+
+  .ds-nav__inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-block: var(--cn-pad-y);
+    position: relative;
+  }
+
+  .ds-nav__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    gap: 0;
+  }
+
+  .ds-nav__item { position: static; }
+
+  .ds-nav__link,
+  .ds-nav__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    text-decoration: none;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    line-height: 1.2;
+    border-radius: 4px;
+    transition: background-color .15s, color .15s;
+  }
+
+  .ds-nav__link:hover,
+  .ds-nav__trigger:hover,
+  .ds-nav__item.is-open .ds-nav__trigger {
+    background: var(--cn-accent);
+    color: #fff;
+  }
+
+  .ds-nav__item--highlighted > .ds-nav__link,
+  .ds-nav__item--highlighted > .ds-nav__trigger {
+    background: var(--cn-accent);
+    color: #fff;
+  }
+  .ds-nav__item--highlighted > .ds-nav__link:hover,
+  .ds-nav__item--highlighted > .ds-nav__trigger:hover {
+    filter: brightness(1.1);
+  }
+
+  .ds-nav__chevron {
+    width: 10px;
+    height: 10px;
+    flex: 0 0 10px;
+    transition: transform .18s;
+  }
+  .ds-nav__item.is-open .ds-nav__chevron { transform: rotate(180deg); }
+
+  /* Mega panel */
+  .ds-mega {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    background: var(--cn-mega-bg);
+    color: var(--cn-mega-fg);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    border-top: 1px solid rgba(0,0,0,0.06);
+    z-index: 1000;
+    display: none;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+  }
+  .ds-mega.is-open { display: block; }
+
+  .ds-mega__inner {
+    display: grid;
+    grid-template-columns: minmax(220px, 280px) 1fr;
+    gap: 0;
+    padding-block: 20px;
+  }
+
+  .ds-mega__sidebar {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-right: 1px solid rgba(0,0,0,0.08);
+  }
+
+  .ds-mega__l2 { margin: 0; }
+  .ds-mega__l2-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    color: inherit;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 4px;
+  }
+  .ds-mega__l2-link:hover,
+  .ds-mega__l2.is-active .ds-mega__l2-link {
+    background: var(--cn-mega-active-bg);
+    color: var(--cn-accent);
+  }
+  .ds-mega__l2-arrow {
+    width: 12px;
+    height: 12px;
+    flex: 0 0 12px;
+    opacity: 0.5;
+  }
+  .ds-mega__l2.is-active .ds-mega__l2-arrow { opacity: 1; }
+
+  .ds-mega__panes { padding: 0 20px; min-width: 0; }
+  .ds-mega__pane { display: none; }
+  .ds-mega__pane.is-active { display: block; }
+
+  .ds-mega__l3-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px 24px;
+  }
+  .ds-mega__l3-list > li { margin: 0; }
+  .ds-mega__l3-link {
+    display: block;
+    padding: 6px 0;
+    color: inherit;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  .ds-mega__l3-link:hover { color: var(--cn-accent); }
+  .ds-mega__pane-cta {
+    display: inline-block;
+    color: var(--cn-accent);
+    font-weight: 600;
+    text-decoration: none;
+    padding: 6px 0;
+  }
+
+  /* Hamburger (mobile) */
+  .ds-nav__hamburger {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  .ds-nav__hamburger svg { width: 24px; height: 24px; }
+  .ds-nav__hamburger:hover { background: rgba(255,255,255,0.08); }
+
+  /* Mobile breakpoint */
+  @media (max-width: 989px) {
+    .ds-nav__hamburger { display: inline-flex; }
+    .ds-nav__list { display: none; }
+    .ds-nav__inner { padding-block: 8px; }
+  }
+
+  /* Mobile drawer */
+  .ds-mobile-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+  }
+  .ds-mobile-drawer__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    transition: opacity .28s ease;
+    pointer-events: none;
+  }
+  .ds-mobile-drawer__panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(85vw, 360px);
+    background: #fff;
+    color: #161616;
+    transform: translateX(-100%);
+    transition: transform .28s ease;
+    overflow-y: auto;
+    pointer-events: auto;
+  }
+  .ds-mobile-drawer.is-open { pointer-events: auto; }
+  .ds-mobile-drawer.is-open .ds-mobile-drawer__overlay { opacity: 1; pointer-events: auto; }
+  .ds-mobile-drawer.is-open .ds-mobile-drawer__panel { transform: translateX(0); }
+
+  .ds-mobile-drawer__close {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    border: 0;
+    width: 100%;
+    text-align: right;
+    padding: 14px 16px;
+    cursor: pointer;
+    color: inherit;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+  }
+  .ds-mobile-drawer__close svg { width: 24px; height: 24px; }
+
+  .ds-mobile-drawer__list,
+  .ds-mobile-drawer__sublist,
+  .ds-mobile-drawer__subsublist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .ds-mobile-drawer__item { border-bottom: 1px solid rgba(0,0,0,0.06); }
+  .ds-mobile-drawer details > summary,
+  .ds-mobile-drawer__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    color: inherit;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+  .ds-mobile-drawer details > summary::-webkit-details-marker { display: none; }
+  .ds-mobile-drawer details > summary::marker { content: ''; }
+  .ds-mobile-drawer__chev {
+    width: 14px;
+    height: 14px;
+    transition: transform .18s;
+  }
+  .ds-mobile-drawer details[open] > summary > .ds-mobile-drawer__chev { transform: rotate(180deg); }
+
+  .ds-mobile-drawer__sublist {
+    background: rgba(0,0,0,0.03);
+    padding-left: 12px;
+  }
+  .ds-mobile-drawer__sublist > li { border-top: 1px solid rgba(0,0,0,0.05); }
+  .ds-mobile-drawer__sublink,
+  .ds-mobile-drawer__sublist a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    color: inherit;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .ds-mobile-drawer__subsublist {
+    background: rgba(0,0,0,0.05);
+    padding-left: 12px;
+  }
+  .ds-mobile-drawer__subsublist > li { border-top: 1px solid rgba(0,0,0,0.05); }
+  .ds-mobile-drawer__subsublist a {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 400;
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Sticky behavior */
+  {% if section.settings.sticky %}
+    #shopify-section-{{ section.id }} {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+  {% endif %}
+{%- endstyle -%}
+
+<custom-nav class="ds-nav-section">
+  <nav class="ds-nav" aria-label="Main">
+    <div class="ds-nav__inner page-width">
+
+      {%- if section.settings.show_hamburger -%}
+        <button type="button"
+                class="ds-nav__hamburger"
+                aria-label="Open menu"
+                aria-expanded="false"
+                aria-controls="ds-mobile-drawer-{{ section.id }}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M3 6h18M3 12h18M3 18h18"/>
+          </svg>
+        </button>
+      {%- endif -%}
+
+      {%- if menu != blank and menu.links.size > 0 -%}
+        <ul class="ds-nav__list">
+          {%- for link in menu.links -%}
+            {%- assign link_title_lower = link.title | downcase | strip -%}
+            {%- assign is_highlighted = false -%}
+            {%- for h in highlighted_list -%}
+              {%- assign h_clean = h | strip -%}
+              {%- if h_clean != blank and h_clean == link_title_lower -%}
+                {%- assign is_highlighted = true -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+            <li class="ds-nav__item{% if link.links.size > 0 %} ds-nav__item--has-mega{% endif %}{% if is_highlighted %} ds-nav__item--highlighted{% endif %}">
+              {%- if link.links.size > 0 -%}
+                <button type="button"
+                        class="ds-nav__trigger"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                  <span>{{ link.title | escape }}</span>
+                  <svg class="ds-nav__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m6 9 6 6 6-6"/>
+                  </svg>
+                </button>
+                <div class="ds-mega" data-mega>
+                  <div class="ds-mega__inner page-width">
+                    <ul class="ds-mega__sidebar">
+                      {%- for sub in link.links -%}
+                        <li class="ds-mega__l2{% if forloop.first %} is-active{% endif %}" data-l2="{{ forloop.index }}">
+                          <a href="{{ sub.url }}" class="ds-mega__l2-link">
+                            <span>{{ sub.title | escape }}</span>
+                            {%- if sub.links.size > 0 -%}
+                              <svg class="ds-mega__l2-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="m9 6 6 6-6 6"/>
+                              </svg>
+                            {%- endif -%}
+                          </a>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                    <div class="ds-mega__panes">
+                      {%- for sub in link.links -%}
+                        <div class="ds-mega__pane{% if forloop.first %} is-active{% endif %}" data-pane="{{ forloop.index }}">
+                          {%- if sub.links.size > 0 -%}
+                            <ul class="ds-mega__l3-list">
+                              {%- for grand in sub.links -%}
+                                <li><a href="{{ grand.url }}" class="ds-mega__l3-link">{{ grand.title | escape }}</a></li>
+                              {%- endfor -%}
+                            </ul>
+                          {%- else -%}
+                            <a href="{{ sub.url }}" class="ds-mega__pane-cta">{{ sub.title | escape }} →</a>
+                          {%- endif -%}
+                        </div>
+                      {%- endfor -%}
+                    </div>
+                  </div>
+                </div>
+              {%- else -%}
+                <a href="{{ link.url }}" class="ds-nav__link">{{ link.title | escape }}</a>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- else -%}
+        <p class="ds-nav__list" style="color:rgba(255,255,255,0.7);font-size:13px;padding:8px 14px;">
+          Pick a menu in section settings.
+        </p>
+      {%- endif -%}
+
+    </div>
+  </nav>
+
+  {%- comment -%} Mobile drawer {%- endcomment -%}
+  {%- if section.settings.show_hamburger and menu != blank -%}
+    <div class="ds-mobile-drawer"
+         id="ds-mobile-drawer-{{ section.id }}"
+         data-drawer
+         hidden>
+      <div class="ds-mobile-drawer__overlay" data-drawer-close></div>
+      <div class="ds-mobile-drawer__panel" role="dialog" aria-modal="true" aria-label="Menu">
+        <button type="button" class="ds-mobile-drawer__close" aria-label="Close menu" data-drawer-close>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="m6 6 12 12M6 18 18 6"/>
+          </svg>
+        </button>
+        <ul class="ds-mobile-drawer__list">
+          {%- for link in menu.links -%}
+            <li class="ds-mobile-drawer__item">
+              {%- if link.links.size > 0 -%}
+                <details>
+                  <summary>
+                    <span>{{ link.title | escape }}</span>
+                    <svg class="ds-mobile-drawer__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="m6 9 6 6 6-6"/>
+                    </svg>
+                  </summary>
+                  <ul class="ds-mobile-drawer__sublist">
+                    {%- for sub in link.links -%}
+                      <li>
+                        {%- if sub.links.size > 0 -%}
+                          <details>
+                            <summary class="ds-mobile-drawer__sublink">
+                              <span>{{ sub.title | escape }}</span>
+                              <svg class="ds-mobile-drawer__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="m6 9 6 6 6-6"/>
+                              </svg>
+                            </summary>
+                            <ul class="ds-mobile-drawer__subsublist">
+                              {%- for grand in sub.links -%}
+                                <li><a href="{{ grand.url }}">{{ grand.title | escape }}</a></li>
+                              {%- endfor -%}
+                            </ul>
+                          </details>
+                        {%- else -%}
+                          <a href="{{ sub.url }}" class="ds-mobile-drawer__sublink">{{ sub.title | escape }}</a>
+                        {%- endif -%}
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </details>
+              {%- else -%}
+                <a href="{{ link.url }}" class="ds-mobile-drawer__link">{{ link.title | escape }}</a>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    </div>
+  {%- endif -%}
+</custom-nav>
+
+<script src="{{ 'custom-nav.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Custom nav",
+  "tag": "section",
+  "class": "section section-custom-nav",
+  "enabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Menu"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "default": "main-menu",
+      "label": "Menu",
+      "info": "Up to 3 levels are supported. Edit nesting in Online Store → Navigation."
+    },
+    {
+      "type": "text",
+      "id": "highlighted_titles",
+      "label": "Highlighted item titles",
+      "info": "Comma-separated list of top-level item titles to render in the accent color (e.g. 'Summer Sale, Best Seller')."
+    },
+    {
+      "type": "header",
+      "content": "Mobile"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hamburger",
+      "default": true,
+      "label": "Show hamburger menu on mobile"
+    },
+    {
+      "type": "header",
+      "content": "Behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "default": false,
+      "label": "Sticky on scroll"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "default": "#0d1627",
+      "label": "Nav background"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "default": "#ffffff",
+      "label": "Nav text"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "default": "#ef3639",
+      "label": "Accent (active / highlighted)"
+    },
+    {
+      "type": "color",
+      "id": "mega_bg_color",
+      "default": "#ffffff",
+      "label": "Mega panel background"
+    },
+    {
+      "type": "color",
+      "id": "mega_text_color",
+      "default": "#161616",
+      "label": "Mega panel text"
+    },
+    {
+      "type": "color",
+      "id": "mega_active_bg_color",
+      "default": "#fde8e9",
+      "label": "Mega sidebar active background"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "default": 4,
+      "unit": "px",
+      "label": "Vertical padding"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom nav"
+    }
+  ]
+}
+{% endschema %}
