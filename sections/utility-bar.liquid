@@ -1,0 +1,344 @@
+{%- liquid
+  assign show_phone = false
+  if section.settings.phone_number != blank
+    assign show_phone = true
+  endif
+
+  assign show_email = false
+  if section.settings.email_address != blank
+    assign show_email = true
+  endif
+
+  assign show_hours = false
+  if section.settings.store_hours != blank
+    assign show_hours = true
+  endif
+
+  assign show_left = false
+  if show_phone or show_email or show_hours
+    assign show_left = true
+  endif
+
+  assign show_play = false
+  if section.settings.google_play_image != blank
+    assign show_play = true
+  endif
+
+  assign show_apple = false
+  if section.settings.app_store_image != blank
+    assign show_apple = true
+  endif
+
+  assign show_right = false
+  if show_play or show_apple
+    assign show_right = true
+  endif
+
+  assign phone_link = section.settings.phone_link
+  if phone_link == blank and show_phone
+    assign cleaned = section.settings.phone_number | remove: ' ' | remove: '-' | remove: '(' | remove: ')'
+    assign phone_link = 'tel:' | append: cleaned
+  endif
+
+  assign email_link = section.settings.email_link
+  if email_link == blank and show_email
+    assign email_link = 'mailto:' | append: section.settings.email_address
+  endif
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --ub-bg: {{ section.settings.background_color | default: '#ffffff' }};
+    --ub-fg: {{ section.settings.text_color | default: '#161616' }};
+    --ub-accent: {{ section.settings.accent_color | default: '#161616' }};
+    --ub-pad-y: {{ section.settings.padding_vertical }}px;
+  }
+  .utility-bar {
+    background: var(--ub-bg);
+    color: var(--ub-fg);
+    font-size: 13px;
+    line-height: 1.4;
+    padding: var(--ub-pad-y) 16px;
+    box-sizing: border-box;
+    {% if section.settings.show_bottom_border %}border-bottom: 1px solid rgba(0,0,0,0.06);{% endif %}
+  }
+  .utility-bar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    max-width: 1400px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+  }
+  .utility-bar__left,
+  .utility-bar__right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .utility-bar__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .utility-bar__item:hover { color: var(--ub-accent); }
+  .utility-bar__icon {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 14px;
+    color: var(--ub-accent);
+  }
+  .utility-bar__sep {
+    color: var(--ub-fg);
+    opacity: 0.35;
+    user-select: none;
+  }
+  .utility-bar__app {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+  }
+  .utility-bar__app img {
+    height: {{ section.settings.app_badge_height }}px;
+    width: auto;
+    display: block;
+  }
+  {% unless section.settings.show_on_mobile %}
+    @media (max-width: 749px) {
+      #shopify-section-{{ section.id }} { display: none; }
+    }
+  {% endunless %}
+  @media (max-width: 749px) {
+    .utility-bar__inner { gap: 8px; justify-content: center; }
+    .utility-bar__left, .utility-bar__right { gap: 10px; }
+    .utility-bar { font-size: 12px; padding-inline: 8px; }
+  }
+{%- endstyle -%}
+
+<div class="utility-bar">
+  <div class="utility-bar__inner">
+
+    {%- if show_left -%}
+      <div class="utility-bar__left">
+
+        {%- if show_phone -%}
+          <a class="utility-bar__item" href="{{ phone_link }}" aria-label="Call us">
+            <svg class="utility-bar__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25c1.1.36 2.3.55 3.6.55a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.3.2 2.5.55 3.6a1 1 0 0 1-.25 1l-2.2 2.2z"/>
+            </svg>
+            <span>{{ section.settings.phone_number }}</span>
+          </a>
+        {%- endif -%}
+
+        {%- if show_email -%}
+          <a class="utility-bar__item" href="{{ email_link }}" aria-label="Email us">
+            <svg class="utility-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="14" rx="2"/>
+              <path d="m3 7 9 6 9-6"/>
+            </svg>
+            <span>{{ section.settings.email_address }}</span>
+          </a>
+        {%- endif -%}
+
+        {%- if show_hours -%}
+          {%- if show_phone or show_email -%}
+            <span class="utility-bar__sep" aria-hidden="true">|</span>
+          {%- endif -%}
+          <span class="utility-bar__item">
+            <span>{{ section.settings.store_hours }}</span>
+          </span>
+        {%- endif -%}
+
+      </div>
+    {%- endif -%}
+
+    {%- if show_right -%}
+      <div class="utility-bar__right">
+
+        {%- if section.settings.app_label != blank -%}
+          <span class="utility-bar__item" aria-hidden="true">{{ section.settings.app_label }}</span>
+        {%- endif -%}
+
+        {%- if show_play -%}
+          {%- assign play_image = section.settings.google_play_image -%}
+          <a class="utility-bar__app"
+             href="{{ section.settings.google_play_link | default: '#' }}"
+             {% if section.settings.app_links_new_tab %}target="_blank" rel="noopener"{% endif %}
+             aria-label="Get it on Google Play">
+            <img src="{{ play_image | image_url: width: 240 }}"
+                 width="{{ play_image.width }}"
+                 height="{{ play_image.height }}"
+                 alt="Get it on Google Play"
+                 loading="eager"
+                 fetchpriority="low"
+                 decoding="async">
+          </a>
+        {%- endif -%}
+
+        {%- if show_apple -%}
+          {%- assign apple_image = section.settings.app_store_image -%}
+          <a class="utility-bar__app"
+             href="{{ section.settings.app_store_link | default: '#' }}"
+             {% if section.settings.app_links_new_tab %}target="_blank" rel="noopener"{% endif %}
+             aria-label="Download on the App Store">
+            <img src="{{ apple_image | image_url: width: 240 }}"
+                 width="{{ apple_image.width }}"
+                 height="{{ apple_image.height }}"
+                 alt="Download on the App Store"
+                 loading="eager"
+                 fetchpriority="low"
+                 decoding="async">
+          </a>
+        {%- endif -%}
+
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Utility bar",
+  "tag": "section",
+  "class": "section section-utility-bar",
+  "enabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contact info"
+    },
+    {
+      "type": "text",
+      "id": "phone_number",
+      "label": "Phone number",
+      "default": "+91 9638666607"
+    },
+    {
+      "type": "url",
+      "id": "phone_link",
+      "label": "Phone link override",
+      "info": "Optional. Leave blank to auto-generate a tel: link."
+    },
+    {
+      "type": "text",
+      "id": "email_address",
+      "label": "Email",
+      "default": "care@deodap.com"
+    },
+    {
+      "type": "url",
+      "id": "email_link",
+      "label": "Email link override",
+      "info": "Optional. Leave blank to auto-generate a mailto: link."
+    },
+    {
+      "type": "text",
+      "id": "store_hours",
+      "label": "Store hours",
+      "default": "9:00 AM to 7:00 PM"
+    },
+    {
+      "type": "header",
+      "content": "App badges"
+    },
+    {
+      "type": "text",
+      "id": "app_label",
+      "label": "Label before badges",
+      "info": "Optional. Leave blank to hide."
+    },
+    {
+      "type": "image_picker",
+      "id": "google_play_image",
+      "label": "Google Play badge"
+    },
+    {
+      "type": "url",
+      "id": "google_play_link",
+      "label": "Google Play link"
+    },
+    {
+      "type": "image_picker",
+      "id": "app_store_image",
+      "label": "App Store badge"
+    },
+    {
+      "type": "url",
+      "id": "app_store_link",
+      "label": "App Store link"
+    },
+    {
+      "type": "checkbox",
+      "id": "app_links_new_tab",
+      "default": true,
+      "label": "Open app links in a new tab"
+    },
+    {
+      "type": "range",
+      "id": "app_badge_height",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "default": 28,
+      "unit": "px",
+      "label": "App badge height"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#161616"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Icon / hover accent",
+      "default": "#161616"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bottom_border",
+      "default": true,
+      "label": "Show bottom border"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "default": 6,
+      "unit": "px",
+      "label": "Vertical padding"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_mobile",
+      "default": false,
+      "label": "Show on mobile"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Utility bar"
+    }
+  ]
+}
+{% endschema %}
