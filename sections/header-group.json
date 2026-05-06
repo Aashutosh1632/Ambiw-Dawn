@@ -37,6 +37,7 @@
     },
     "header": {
       "type": "header",
+      "disabled": true,
       "settings": {
         "logo_position": "middle-left",
         "mobile_logo_position": "center",
@@ -58,7 +59,8 @@
       "type": "custom-header",
       "name": "Custom header",
       "settings": {
-        "logo_width": 120,
+        "logo": "shopify://shop_images/logo_w_11zon.webp",
+        "logo_width": 170,
         "show_search": true,
         "search_placeholder": "Search for products",
         "search_type": "product",
