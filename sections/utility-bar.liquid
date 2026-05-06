@@ -58,7 +58,7 @@
     color: var(--ub-fg);
     font-size: 13px;
     line-height: 1.4;
-    padding: var(--ub-pad-y) 16px;
+    padding-block: var(--ub-pad-y);
     box-sizing: border-box;
     {% if section.settings.show_bottom_border %}border-bottom: 1px solid rgba(0,0,0,0.06);{% endif %}
   }
@@ -67,8 +67,6 @@
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    max-width: 1400px;
-    margin: 0 auto;
     flex-wrap: wrap;
   }
   .utility-bar__left,
@@ -115,12 +113,12 @@
   @media (max-width: 749px) {
     .utility-bar__inner { gap: 8px; justify-content: center; }
     .utility-bar__left, .utility-bar__right { gap: 10px; }
-    .utility-bar { font-size: 12px; padding-inline: 8px; }
+    .utility-bar { font-size: 12px; }
   }
 {%- endstyle -%}
 
 <div class="utility-bar">
-  <div class="utility-bar__inner">
+  <div class="utility-bar__inner page-width">
 
     {%- if show_left -%}
       <div class="utility-bar__left">
