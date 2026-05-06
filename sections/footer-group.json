@@ -1,1 +1,140 @@
-{"name":"t:sections.footer.name","type":"footer","sections":{"footer":{"type":"footer","settings":{"color_scheme":"scheme-1","newsletter_enable":true,"newsletter_heading":"Subscribe to our emails","enable_follow_on_shop":true,"show_social":true,"enable_country_selector":true,"enable_language_selector":true,"payment_enable":true,"show_policy":true,"margin_top":0,"padding_top":36,"padding_bottom":36}}},"order":["footer"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.footer.name",
+  "type": "footer",
+  "sections": {
+    "custom_footer_QnPtzq": {
+      "type": "custom-footer",
+      "blocks": {
+        "menu_column_UyWAYF": {
+          "type": "menu_column",
+          "settings": {
+            "heading": "Quick Links",
+            "menu": "quick-links"
+          }
+        },
+        "menu_column_9mzMqG": {
+          "type": "menu_column",
+          "settings": {
+            "heading": "Policies",
+            "menu": "policy-pages"
+          }
+        },
+        "menu_column_7ADXVK": {
+          "type": "menu_column",
+          "settings": {
+            "heading": "Other Links",
+            "menu": "other-links"
+          }
+        },
+        "menu_column_kKG7Km": {
+          "type": "menu_column",
+          "settings": {
+            "heading": "Drop Shipping with DeoDap",
+            "menu": "drop-shipping-with-deodap"
+          }
+        },
+        "social_icon_9xXUUQ": {
+          "type": "social_icon",
+          "settings": {
+            "platform": "facebook",
+            "url": ""
+          }
+        },
+        "social_icon_raRyDf": {
+          "type": "social_icon",
+          "settings": {
+            "platform": "instagram",
+            "url": ""
+          }
+        },
+        "social_icon_EcKmGg": {
+          "type": "social_icon",
+          "settings": {
+            "platform": "linkedin",
+            "url": ""
+          }
+        },
+        "social_icon_prCVnQ": {
+          "type": "social_icon",
+          "settings": {
+            "platform": "youtube",
+            "url": ""
+          }
+        },
+        "social_icon_Rwpk4r": {
+          "type": "social_icon",
+          "settings": {
+            "platform": "whatsapp",
+            "url": ""
+          }
+        }
+      },
+      "block_order": [
+        "menu_column_UyWAYF",
+        "menu_column_9mzMqG",
+        "menu_column_7ADXVK",
+        "menu_column_kKG7Km",
+        "social_icon_9xXUUQ",
+        "social_icon_raRyDf",
+        "social_icon_EcKmGg",
+        "social_icon_prCVnQ",
+        "social_icon_Rwpk4r"
+      ],
+      "name": "Custom footer",
+      "settings": {
+        "logo": "shopify://shop_images/logo_w_11zon.webp",
+        "logo_width": 130,
+        "tagline": "Spend Less, Get Best",
+        "gp_image": "shopify://shop_images/Google_play_1.png",
+        "gp_link": "",
+        "as_image": "shopify://shop_images/app_store_4.png",
+        "as_link": "",
+        "app_links_new_tab": true,
+        "app_badge_height": 36,
+        "social_label": "FOLLOW US :",
+        "company_info": "<p>Dabster International Private Limited</p><p>GST: 24AAHCD5265C1ZX</p><p>CIN: U51909GJ2019PTC110919</p>",
+        "copyright": "<p>Copyright © 2026 DeoDap.</p>",
+        "trust_seal_height": 56,
+        "background_color": "#0d1627",
+        "text_color": "#ffffff",
+        "muted_color": "#a0a8b8",
+        "accent_color": "#ef3639",
+        "info_box_bg_color": "#1a2237",
+        "info_box_text_color": "#ef3639",
+        "padding_top": 40,
+        "padding_bottom": 24
+      }
+    },
+    "footer": {
+      "type": "footer",
+      "disabled": true,
+      "settings": {
+        "color_scheme": "scheme-1",
+        "newsletter_enable": true,
+        "newsletter_heading": "Subscribe to our emails",
+        "enable_follow_on_shop": true,
+        "show_social": true,
+        "enable_country_selector": true,
+        "enable_language_selector": true,
+        "payment_enable": true,
+        "show_policy": true,
+        "margin_top": 0,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "custom_footer_QnPtzq",
+    "footer"
+  ]
+}
