@@ -16,11 +16,16 @@
     --ch-pad-y: {{ section.settings.padding_vertical }}px;
     --ch-logo-w: {{ section.settings.logo_width }}px;
   }
+  .ds-header,
+  .ds-header *,
+  .ds-header *::before,
+  .ds-header *::after {
+    box-sizing: border-box;
+  }
   .ds-header {
     background: var(--ch-bg);
     color: var(--ch-fg);
     padding-block: var(--ch-pad-y);
-    box-sizing: border-box;
   }
   .ds-header__inner {
     display: flex;
@@ -57,23 +62,37 @@
     flex: 1 1 auto;
     border: 0;
     outline: 0;
+    margin: 0;
     padding: 10px 16px;
     background: transparent;
-    color: inherit;
+    color: var(--ch-search-fg);
     font: inherit;
     min-width: 0;
+    -webkit-appearance: none;
+    appearance: none;
+    height: auto;
+    box-shadow: none;
   }
-  .ds-header__search-input::placeholder { color: rgba(0,0,0,0.45); }
+  .ds-header__search-input::-webkit-search-decoration,
+  .ds-header__search-input::-webkit-search-cancel-button,
+  .ds-header__search-input::-webkit-search-results-button,
+  .ds-header__search-input::-webkit-search-results-decoration { display: none; }
+  .ds-header__search-input::placeholder { color: rgba(0,0,0,0.45); opacity: 1; }
   .ds-header__search-btn {
     flex: 0 0 auto;
     background: var(--ch-accent);
     color: #fff;
     border: 0;
+    margin: 0;
     padding: 0 18px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    font: inherit;
+    line-height: 1;
+    -webkit-appearance: none;
+    appearance: none;
   }
   .ds-header__search-btn:hover { filter: brightness(1.08); }
   .ds-header__search-btn svg { width: 18px; height: 18px; }
@@ -216,7 +235,11 @@
       {%- endif -%}
 
       {%- if show_cart -%}
-        <a href="{{ routes.cart_url }}" class="ds-header__icon" aria-label="Cart, {{ cart.item_count }} item{% if cart.item_count != 1 %}s{% endif %}">
+        {%- assign cart_action = section.settings.cart_action | default: 'drawer' -%}
+        <a href="{{ routes.cart_url }}"
+           class="ds-header__icon"
+           {% if cart_action == 'drawer' %}id="cart-icon-bubble" aria-controls="CartDrawer"{% endif %}
+           aria-label="Cart, {{ cart.item_count }} item{% if cart.item_count != 1 %}s{% endif %}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="9" cy="20" r="1.5"/>
             <circle cx="18" cy="20" r="1.5"/>
@@ -341,6 +364,17 @@
       "id": "show_cart",
       "default": true,
       "label": "Show cart icon"
+    },
+    {
+      "type": "select",
+      "id": "cart_action",
+      "label": "Cart icon action",
+      "default": "drawer",
+      "options": [
+        { "value": "page", "label": "Go to cart page" },
+        { "value": "drawer", "label": "Open theme cart drawer" }
+      ],
+      "info": "Drawer mode adds id='cart-icon-bubble' (Dawn) and aria-controls='CartDrawer' (Hyper) so the existing theme drawer opens."
     },
     {
       "type": "header",
