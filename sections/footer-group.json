@@ -76,6 +76,51 @@
             "platform": "whatsapp",
             "url": ""
           }
+        },
+        "trust_seal_PNWNxJ": {
+          "type": "trust_seal",
+          "settings": {
+            "image": "shopify://shop_images/image_11_1.png",
+            "url": "",
+            "open_new_tab": false,
+            "alt": ""
+          }
+        },
+        "trust_seal_YDEYhC": {
+          "type": "trust_seal",
+          "settings": {
+            "image": "shopify://shop_images/trusted-seller_image_svg.png",
+            "url": "",
+            "open_new_tab": false,
+            "alt": ""
+          }
+        },
+        "trust_seal_7QDPB8": {
+          "type": "trust_seal",
+          "settings": {
+            "image": "shopify://shop_images/google_Reviews.png",
+            "url": "",
+            "open_new_tab": false,
+            "alt": ""
+          }
+        },
+        "trust_seal_McQBen": {
+          "type": "trust_seal",
+          "settings": {
+            "image": "shopify://shop_images/muthut_rating.png",
+            "url": "",
+            "open_new_tab": false,
+            "alt": ""
+          }
+        },
+        "trust_seal_GW8Efp": {
+          "type": "trust_seal",
+          "settings": {
+            "image": "shopify://shop_images/amazon_rating.png",
+            "url": "",
+            "open_new_tab": false,
+            "alt": ""
+          }
         }
       },
       "block_order": [
@@ -87,7 +132,12 @@
         "social_icon_raRyDf",
         "social_icon_EcKmGg",
         "social_icon_prCVnQ",
-        "social_icon_Rwpk4r"
+        "social_icon_Rwpk4r",
+        "trust_seal_PNWNxJ",
+        "trust_seal_YDEYhC",
+        "trust_seal_7QDPB8",
+        "trust_seal_McQBen",
+        "trust_seal_GW8Efp"
       ],
       "name": "Custom footer",
       "settings": {
