@@ -53,10 +53,34 @@
         "padding_top": 20,
         "padding_bottom": 20
       }
+    },
+    "custom_header_CMBbbG": {
+      "type": "custom-header",
+      "name": "Custom header",
+      "settings": {
+        "logo_width": 120,
+        "show_search": true,
+        "search_placeholder": "Search for products",
+        "search_type": "product",
+        "show_account": true,
+        "show_account_label": true,
+        "account_label": "MY ACCOUNT",
+        "show_wishlist": false,
+        "wishlist_link": "",
+        "wishlist_count": "",
+        "show_cart": true,
+        "background_color": "#0d1627",
+        "text_color": "#ffffff",
+        "accent_color": "#ef3639",
+        "search_bg_color": "#ffffff",
+        "search_text_color": "#161616",
+        "padding_vertical": 12
+      }
     }
   },
   "order": [
     "utility_bar_kHyebD",
-    "header"
+    "header",
+    "custom_header_CMBbbG"
   ]
 }
