@@ -247,7 +247,100 @@
         "custom_class": "",
         "columns_desktop": 6,
         "columns_mobile": "4",
+        "enable_mobile_slider": false,
         "eager_first_row": true,
+        "padding_top": 24,
+        "padding_bottom": 24
+      }
+    },
+    "category_grid_dwM63q": {
+      "type": "category-grid",
+      "blocks": {
+        "category_C97t6B": {
+          "type": "category",
+          "settings": {
+            "title": "",
+            "title_color": "",
+            "collection": "",
+            "link": "",
+            "hide_on_mobile": false,
+            "hide_on_desktop": false
+          }
+        },
+        "category_w3qpF4": {
+          "type": "category",
+          "settings": {
+            "title": "",
+            "title_color": "",
+            "collection": "",
+            "link": "",
+            "hide_on_mobile": false,
+            "hide_on_desktop": false
+          }
+        },
+        "category_7hJJXp": {
+          "type": "category",
+          "settings": {
+            "title": "",
+            "title_color": "",
+            "collection": "",
+            "link": "",
+            "hide_on_mobile": false,
+            "hide_on_desktop": false
+          }
+        },
+        "category_FabAMe": {
+          "type": "category",
+          "settings": {
+            "title": "",
+            "title_color": "",
+            "collection": "",
+            "link": "",
+            "hide_on_mobile": false,
+            "hide_on_desktop": false
+          }
+        },
+        "category_w4AJtJ": {
+          "type": "category",
+          "settings": {
+            "title": "",
+            "title_color": "",
+            "collection": "",
+            "link": "",
+            "hide_on_mobile": false,
+            "hide_on_desktop": false
+          }
+        },
+        "category_tFjfwt": {
+          "type": "category",
+          "settings": {
+            "title": "",
+            "title_color": "",
+            "collection": "",
+            "link": "",
+            "hide_on_mobile": false,
+            "hide_on_desktop": false
+          }
+        }
+      },
+      "block_order": [
+        "category_C97t6B",
+        "category_w3qpF4",
+        "category_7hJJXp",
+        "category_FabAMe",
+        "category_w4AJtJ",
+        "category_tFjfwt"
+      ],
+      "name": "Category Grid",
+      "settings": {
+        "title": "Top Categories",
+        "heading_size": "h1",
+        "title_color": "",
+        "custom_class": "",
+        "columns_desktop": 6,
+        "columns_mobile": "4",
+        "enable_mobile_slider": false,
+        "eager_first_row": false,
         "padding_top": 24,
         "padding_bottom": 24
       }
@@ -255,6 +348,7 @@
   },
   "order": [
     "featured_cards_carousel_tENHLw",
-    "category_grid_h46pD4"
+    "category_grid_h46pD4",
+    "category_grid_dwM63q"
   ]
 }
