@@ -256,90 +256,157 @@
     "category_grid_dwM63q": {
       "type": "category-grid",
       "blocks": {
-        "category_C97t6B": {
+        "category_phMJhU": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/Group_14981898_1.png",
+            "mobile_image": "shopify://shop_images/Group_14981897_1.png",
             "title": "",
             "title_color": "",
             "collection": "",
-            "link": "",
+            "link": "shopify://collections/under-9",
             "hide_on_mobile": false,
             "hide_on_desktop": false
           }
         },
-        "category_w3qpF4": {
+        "category_eUALNW": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/Group_14981887_1.png",
+            "mobile_image": "shopify://shop_images/Group_14981876_2.png",
             "title": "",
             "title_color": "",
             "collection": "",
-            "link": "",
+            "link": "shopify://collections/under-29",
             "hide_on_mobile": false,
             "hide_on_desktop": false
           }
         },
-        "category_7hJJXp": {
+        "category_xDUFPi": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/Group_14981888_1.png",
+            "mobile_image": "shopify://shop_images/Group_14981877_1.png",
             "title": "",
             "title_color": "",
             "collection": "",
-            "link": "",
+            "link": "shopify://collections/under-49",
             "hide_on_mobile": false,
             "hide_on_desktop": false
           }
         },
-        "category_FabAMe": {
+        "category_TtQGpp": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/Group_14981890_1.png",
+            "mobile_image": "shopify://shop_images/Group_14981879_2_1.png",
             "title": "",
             "title_color": "",
             "collection": "",
-            "link": "",
+            "link": "shopify://collections/under-149",
             "hide_on_mobile": false,
             "hide_on_desktop": false
           }
         },
-        "category_w4AJtJ": {
+        "category_T6MmpX": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/Group_14981891_1.png",
+            "mobile_image": "shopify://shop_images/Group_14981880_2_1.png",
             "title": "",
             "title_color": "",
             "collection": "",
-            "link": "",
+            "link": "shopify://collections/under-249",
             "hide_on_mobile": false,
             "hide_on_desktop": false
           }
         },
-        "category_tFjfwt": {
+        "category_jmGCYM": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/Group_14981892_1.png",
+            "mobile_image": "shopify://shop_images/Group_14981881_2_1.png",
             "title": "",
             "title_color": "",
             "collection": "",
-            "link": "",
+            "link": "shopify://collections/under-349",
+            "hide_on_mobile": false,
+            "hide_on_desktop": false
+          }
+        },
+        "category_WC6rhV": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/Group_14981893_1.png",
+            "mobile_image": "shopify://shop_images/Group_14981882_1.png",
+            "title": "",
+            "title_color": "",
+            "collection": "",
+            "link": "shopify://collections/under-449",
+            "hide_on_mobile": false,
+            "hide_on_desktop": false
+          }
+        },
+        "category_t6dBpz": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/Group_14981894_2.png",
+            "title": "",
+            "title_color": "",
+            "collection": "",
+            "link": "shopify://collections/under-499",
+            "hide_on_mobile": true,
+            "hide_on_desktop": false
+          }
+        },
+        "category_txrhHq": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/Group_14981895_1.png",
+            "mobile_image": "shopify://shop_images/Group_14981884_2_1.png",
+            "title": "",
+            "title_color": "",
+            "collection": "",
+            "link": "shopify://collections/under-999",
+            "hide_on_mobile": false,
+            "hide_on_desktop": false
+          }
+        },
+        "category_8PWrhA": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/Group_14981896_1.png",
+            "mobile_image": "shopify://shop_images/Group_14981885_2_1.png",
+            "title": "",
+            "title_color": "",
+            "collection": "",
+            "link": "shopify://collections/above-1000",
             "hide_on_mobile": false,
             "hide_on_desktop": false
           }
         }
       },
       "block_order": [
-        "category_C97t6B",
-        "category_w3qpF4",
-        "category_7hJJXp",
-        "category_FabAMe",
-        "category_w4AJtJ",
-        "category_tFjfwt"
+        "category_phMJhU",
+        "category_eUALNW",
+        "category_xDUFPi",
+        "category_TtQGpp",
+        "category_T6MmpX",
+        "category_jmGCYM",
+        "category_WC6rhV",
+        "category_t6dBpz",
+        "category_txrhHq",
+        "category_8PWrhA"
       ],
       "name": "Category Grid",
       "settings": {
-        "title": "Top Categories",
+        "title": "Explore Our Range",
         "heading_size": "h1",
         "title_color": "",
         "custom_class": "",
-        "columns_desktop": 6,
-        "columns_mobile": "4",
-        "enable_mobile_slider": false,
+        "columns_desktop": 5,
+        "columns_mobile": "3",
+        "enable_mobile_slider": true,
         "eager_first_row": false,
         "padding_top": 24,
         "padding_bottom": 24
