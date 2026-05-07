@@ -1,97 +1,109 @@
+{%- comment -%}
+  Featured Cards Carousel — pure CSS scroll-snap, no Swiper, no custom element.
+  Defensive: uses padding-hack for aspect ratio (universal browser support),
+  inline style attributes on critical elements (highest specificity, can't be
+  overridden by theme CSS), plain HTML (no custom elements / web components).
+{%- endcomment -%}
+
 {%- liquid
-  assign cols_d = section.settings.slides_per_view_desktop | default: 2.5
-  assign gap_px = section.settings.gap | default: 20
+  assign cols_d = 2.5
+  if section.settings.slides_per_view_desktop != blank
+    assign cols_d = section.settings.slides_per_view_desktop
+  endif
+
+  assign gap_px = 20
+  if section.settings.gap != blank
+    assign gap_px = section.settings.gap
+  endif
+
   assign visible_gaps = cols_d | minus: 1
   assign total_gap_px = visible_gaps | times: gap_px
-  assign aspect = section.settings.slide_aspect_ratio | default: '16 / 9'
+  assign slide_width_calc = '(100% - ' | append: total_gap_px | append: 'px) / ' | append: cols_d
+
+  assign aspect_w = 16
+  assign aspect_h = 9
+  if section.settings.aspect_w != blank
+    assign aspect_w = section.settings.aspect_w
+  endif
+  if section.settings.aspect_h != blank
+    assign aspect_h = section.settings.aspect_h
+  endif
+  assign aspect_pct_d = aspect_h | times: 100.0 | divided_by: aspect_w | divided_by: cols_d
+  assign aspect_pct_m = aspect_h | times: 100.0 | divided_by: aspect_w
+
   assign object_fit = section.settings.image_fit | default: 'cover'
-  assign autoplay = section.settings.enable_autoplay
-  assign autoplay_delay = section.settings.autoplay_delay | default: 5000
+  assign autoplay_delay = 0
+  if section.settings.enable_autoplay
+    assign autoplay_delay = section.settings.autoplay_delay | default: 5000
+  endif
+
+  assign sid = section.id | replace: '-', '_'
 -%}
 
 {%- style -%}
-  #shopify-section-{{ section.id }} {
-    --fcc-bg: {{ section.settings.background_color | default: '#ffffff' }};
-    --fcc-radius: {{ section.settings.border_radius | default: 12 }}px;
-    --fcc-gap: {{ gap_px }}px;
-    --fcc-accent: {{ section.settings.dot_active_color | default: '#f04f30' }};
-    --fcc-pad: {{ section.settings.padding | default: 20 }}px;
-  }
+  #shopify-section-{{ section.id }} { display: block; }
   @media (max-width: 768px) {
     #shopify-section-{{ section.id }} {
       order: {{ section.settings.order_no }};
     }
   }
-
-  fcc-carousel,
-  fcc-carousel *,
-  fcc-carousel *::before,
-  fcc-carousel *::after { box-sizing: border-box; }
-
-  fcc-carousel {
-    display: block;
-    background: var(--fcc-bg);
-    padding: var(--fcc-pad);
-    position: relative;
-  }
-  .fcc__viewport {
-    position: relative;
-    overflow: hidden;
-  }
-  .fcc__track {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: var(--fcc-gap);
+  .fccx-{{ sid }} { background: {{ section.settings.background_color | default: '#ffffff' }}; padding: {{ section.settings.padding | default: 20 }}px; box-sizing: border-box; }
+  .fccx-{{ sid }} .fccx__viewport { position: relative; overflow: hidden; box-sizing: border-box; }
+  .fccx-{{ sid }} .fccx__track {
+    display: flex !important;
+    gap: {{ gap_px }}px;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    width: 100%;
-  }
-  .fcc__track::-webkit-scrollbar { display: none; }
-  .fcc__slide {
-    /* Fallback flex-basis (in case calc fails) */
-    flex: 0 0 40%;
-    /* Computed flex-basis from Liquid (no CSS variables in calc, more reliable) */
-    flex: 0 0 calc((100% - {{ total_gap_px }}px) / {{ cols_d }});
-    scroll-snap-align: start;
-    border-radius: var(--fcc-radius);
-    overflow: hidden;
     margin: 0;
-    min-width: 0;
-    aspect-ratio: {{ aspect }};
-    background: rgba(0,0,0,0.04);
-  }
-  .fcc__slide picture { display: block; width: 100%; height: 100%; }
-  .fcc__link {
-    display: block;
+    padding: 0;
+    list-style: none;
     width: 100%;
-    height: 100%;
+    box-sizing: border-box;
+  }
+  .fccx-{{ sid }} .fccx__track::-webkit-scrollbar { display: none; }
+  .fccx-{{ sid }} .fccx__slide {
+    flex: 0 0 calc({{ slide_width_calc }}) !important;
+    scroll-snap-align: start;
+    margin: 0;
+    list-style: none;
+    position: relative;
+    padding-top: {{ aspect_pct_d }}%;
+    border-radius: {{ section.settings.border_radius | default: 12 }}px;
+    overflow: hidden;
+    background: rgba(0,0,0,0.04);
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .fccx-{{ sid }} .fccx__link {
+    position: absolute;
+    inset: 0;
+    display: block;
     text-decoration: none;
     color: inherit;
   }
-  .fcc__img {
-    display: block;
+  .fccx-{{ sid }} .fccx__link picture,
+  .fccx-{{ sid }} .fccx__link img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     max-width: 100%;
+    display: block;
     object-fit: {{ object_fit }};
-    border-radius: var(--fcc-radius);
   }
-
   @media (max-width: 768px) {
-    .fcc__slide {
-      flex: 0 0 100%;
-      flex: 0 0 calc(100% - 0px); /* full width on mobile, no gap math */
+    .fccx-{{ sid }} { padding: 0; }
+    .fccx-{{ sid }} .fccx__slide {
+      flex: 0 0 100% !important;
+      padding-top: {{ aspect_pct_m }}%;
     }
   }
-
-  /* Nav arrows */
-  .fcc__nav {
+  .fccx-{{ sid }} .fccx__nav {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -100,27 +112,21 @@
     border-radius: 50%;
     background: #fff;
     border: 0;
-    color: var(--fcc-accent);
+    color: {{ section.settings.dot_active_color | default: '#f04f30' }};
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     z-index: 2;
-    transition: opacity .15s, transform .15s;
     padding: 0;
   }
-  .fcc__nav:hover { transform: translateY(-50%) scale(1.06); }
-  .fcc__nav:disabled { opacity: 0.35; cursor: default; transform: translateY(-50%); }
-  .fcc__nav svg { width: 16px; height: 16px; }
-  .fcc__nav--prev { left: 6px; }
-  .fcc__nav--next { right: 6px; }
-  @media (max-width: 768px) {
-    .fcc__nav { display: none; }
-  }
-
-  /* Dots pagination */
-  .fcc__dots {
+  .fccx-{{ sid }} .fccx__nav:disabled { opacity: 0.35; cursor: default; }
+  .fccx-{{ sid }} .fccx__nav svg { width: 16px; height: 16px; }
+  .fccx-{{ sid }} .fccx__nav--prev { left: 6px; }
+  .fccx-{{ sid }} .fccx__nav--next { right: 6px; }
+  @media (max-width: 768px) { .fccx-{{ sid }} .fccx__nav { display: none; } }
+  .fccx-{{ sid }} .fccx__dots {
     display: none;
     justify-content: center;
     gap: 8px;
@@ -128,65 +134,54 @@
     list-style: none;
     margin: 0;
   }
-  .fcc__dots li { margin: 0; }
-  .fcc__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #ccc;
-    border: 0;
-    padding: 0;
-    cursor: pointer;
-    transition: background .15s;
+  .fccx-{{ sid }} .fccx__dots li { margin: 0; }
+  .fccx-{{ sid }} .fccx__dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #ccc; border: 0; padding: 0; cursor: pointer;
   }
-  .fcc__dot[aria-current="true"] { background: var(--fcc-accent); }
-  @media (max-width: 768px) {
-    .fcc__dots { display: flex; }
-    fcc-carousel { padding: 0; }
-  }
+  .fccx-{{ sid }} .fccx__dot[aria-current="true"] { background: {{ section.settings.dot_active_color | default: '#f04f30' }}; }
+  @media (max-width: 768px) { .fccx-{{ sid }} .fccx__dots { display: flex; } }
 {%- endstyle -%}
 
-<fcc-carousel class="{% if section.settings.custom_class != blank %}{{ section.settings.custom_class }}{% endif %}"
-              {% if autoplay %}data-fcc-autoplay="{{ autoplay_delay }}"{% endif %}>
-  <div class="fcc__viewport">
-    <button type="button" class="fcc__nav fcc__nav--prev" aria-label="Previous slide" data-fcc-prev disabled>
+<section class="fccx-{{ sid }}{% if section.settings.custom_class != blank %} {{ section.settings.custom_class }}{% endif %}"
+         data-fccx="{{ sid }}"
+         {% if autoplay_delay > 0 %}data-fccx-autoplay="{{ autoplay_delay }}"{% endif %}
+         style="display:block;background:{{ section.settings.background_color | default: '#ffffff' }};">
+  <div class="fccx__viewport" style="position:relative;overflow:hidden;">
+    <button type="button" class="fccx__nav fccx__nav--prev" aria-label="Previous slide" data-fccx-prev disabled>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="m15 18-6-6 6-6"/>
       </svg>
     </button>
 
-    <ul class="fcc__track" data-fcc-track role="list">
+    <ul class="fccx__track" data-fccx-track role="list"
+        style="display:flex;gap:{{ gap_px }}px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;margin:0;padding:0;list-style:none;width:100%;">
       {%- for block in section.blocks -%}
         {%- assign desktop_image = block.settings.image -%}
         {%- assign mobile_image = block.settings.mobile_image | default: desktop_image -%}
         {%- assign desktop_alt = desktop_image.alt | default: shop.name | escape -%}
-        {%- assign is_first = forloop.first -%}
         {%- assign img_loading = 'lazy' -%}
         {%- assign img_priority = 'low' -%}
-        {%- if is_first -%}
+        {%- if forloop.first -%}
           {%- assign img_loading = 'eager' -%}
           {%- assign img_priority = 'high' -%}
         {%- endif -%}
 
-        <li class="fcc__slide" {{ block.shopify_attributes }}>
+        <li class="fccx__slide" {{ block.shopify_attributes }}>
           {%- if block.settings.link != blank -%}
-            <a class="fcc__link" href="{{ block.settings.link }}">
+            <a class="fccx__link" href="{{ block.settings.link }}">
           {%- else -%}
-            <span class="fcc__link">
+            <span class="fccx__link">
           {%- endif -%}
-
             {%- if desktop_image != blank -%}
               <picture>
                 {%- if mobile_image != blank and mobile_image != desktop_image -%}
                   <source media="(max-width: 768px)"
                           srcset="{{ mobile_image | image_url: width: 375 }} 375w, {{ mobile_image | image_url: width: 550 }} 550w, {{ mobile_image | image_url: width: 800 }} 800w"
-                          sizes="100vw"
-                          width="{{ mobile_image.width }}"
-                          height="{{ mobile_image.height }}">
+                          sizes="100vw">
                 {%- endif -%}
-                <img class="fcc__img"
-                     src="{{ desktop_image | image_url: width: 1200 }}"
-                     srcset="{{ desktop_image | image_url: width: 600 }} 600w, {{ desktop_image | image_url: width: 800 }} 800w, {{ desktop_image | image_url: width: 1200 }} 1200w, {{ desktop_image | image_url: width: 1600 }} 1600w"
+                <img src="{{ desktop_image | image_url: width: 1200 }}"
+                     srcset="{{ desktop_image | image_url: width: 600 }} 600w, {{ desktop_image | image_url: width: 800 }} 800w, {{ desktop_image | image_url: width: 1200 }} 1200w"
                      sizes="(min-width: 769px) calc(100vw / {{ cols_d }}), 100vw"
                      width="{{ desktop_image.width }}"
                      height="{{ desktop_image.height }}"
@@ -196,7 +191,6 @@
                      decoding="async">
               </picture>
             {%- endif -%}
-
           {%- if block.settings.link != blank -%}
             </a>
           {%- else -%}
@@ -206,27 +200,86 @@
       {%- endfor -%}
     </ul>
 
-    <button type="button" class="fcc__nav fcc__nav--next" aria-label="Next slide" data-fcc-next>
+    <button type="button" class="fccx__nav fccx__nav--next" aria-label="Next slide" data-fccx-next>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="m9 18 6-6-6-6"/>
       </svg>
     </button>
   </div>
 
-  <ul class="fcc__dots" data-fcc-dots role="list">
+  <ul class="fccx__dots" data-fccx-dots role="list">
     {%- for block in section.blocks -%}
       <li>
-        <button type="button"
-                class="fcc__dot"
-                data-fcc-dot="{{ forloop.index0 }}"
+        <button type="button" class="fccx__dot" data-fccx-dot="{{ forloop.index0 }}"
                 aria-label="Go to slide {{ forloop.index }}"
                 {% if forloop.first %}aria-current="true"{% endif %}></button>
       </li>
     {%- endfor -%}
   </ul>
-</fcc-carousel>
+</section>
 
-<script src="{{ 'featured-cards-carousel.js' | asset_url }}" defer></script>
+<script>
+(function () {
+  var sid = '{{ sid }}';
+  var root = document.querySelector('[data-fccx="' + sid + '"]');
+  if (!root || root.dataset.fccxBound) return;
+  root.dataset.fccxBound = '1';
+
+  var track = root.querySelector('[data-fccx-track]');
+  var prev  = root.querySelector('[data-fccx-prev]');
+  var next  = root.querySelector('[data-fccx-next]');
+  var dots  = Array.prototype.slice.call(root.querySelectorAll('[data-fccx-dot]'));
+  if (!track) return;
+
+  function step() {
+    var first = track.children[0];
+    if (!first) return 0;
+    var cs = getComputedStyle(track);
+    var gap = parseFloat(cs.columnGap || cs.gap) || 0;
+    return first.getBoundingClientRect().width + gap;
+  }
+  function update() {
+    var s = step(); if (!s) return;
+    var idx = Math.max(0, Math.min(Math.round(track.scrollLeft / s), track.children.length - 1));
+    if (prev) prev.disabled = track.scrollLeft <= 1;
+    if (next) next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 1;
+    dots.forEach(function (d, i) { i === idx ? d.setAttribute('aria-current', 'true') : d.removeAttribute('aria-current'); });
+  }
+
+  if (prev) prev.addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: 'smooth' }); });
+  if (next) next.addEventListener('click', function () { track.scrollBy({ left:  step(), behavior: 'smooth' }); });
+  dots.forEach(function (d, i) { d.addEventListener('click', function () { track.scrollTo({ left: i * step(), behavior: 'smooth' }); }); });
+
+  var raf;
+  track.addEventListener('scroll', function () {
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(update);
+  }, { passive: true });
+  window.addEventListener('resize', update);
+
+  var delay = parseInt(root.dataset.fccxAutoplay, 10) || 0;
+  if (delay > 0) {
+    var paused = false, timer = null;
+    function tick() {
+      if (paused) return;
+      var atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 1;
+      if (atEnd) track.scrollTo({ left: 0, behavior: 'smooth' });
+      else track.scrollBy({ left: step(), behavior: 'smooth' });
+    }
+    function start() { if (!timer) timer = setInterval(tick, delay); }
+    function stop()  { if (timer) { clearInterval(timer); timer = null; } }
+    root.addEventListener('mouseenter', function () { paused = true; });
+    root.addEventListener('mouseleave', function () { paused = false; });
+    track.addEventListener('pointerdown', function () { paused = true; });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { e.isIntersecting ? start() : stop(); });
+      }, { threshold: 0.1 }).observe(root);
+    } else { start(); }
+  }
+  update();
+})();
+</script>
 
 {% schema %}
 {
@@ -234,103 +287,20 @@
   "tag": "section",
   "class": "featured-cards-carousel",
   "settings": [
-    {
-      "type": "header",
-      "content": "Layout"
-    },
-    {
-      "type": "range",
-      "id": "slides_per_view_desktop",
-      "min": 1,
-      "max": 4,
-      "step": 0.5,
-      "default": 2.5,
-      "label": "Slides per view (desktop)"
-    },
-    {
-      "type": "text",
-      "id": "slide_aspect_ratio",
-      "default": "16 / 9",
-      "label": "Slide aspect ratio",
-      "info": "CSS aspect-ratio value, e.g. '16 / 9', '5 / 2', '3 / 1'."
-    },
-    {
-      "type": "select",
-      "id": "image_fit",
-      "label": "Image fit",
-      "default": "cover",
-      "options": [
-        { "value": "cover", "label": "Cover (crop to fill)" },
-        { "value": "contain", "label": "Contain (letterbox)" }
-      ]
-    },
-    {
-      "type": "range",
-      "id": "gap",
-      "min": 0,
-      "max": 40,
-      "step": 2,
-      "default": 20,
-      "unit": "px",
-      "label": "Gap between slides"
-    },
-    {
-      "type": "range",
-      "id": "border_radius",
-      "min": 0,
-      "max": 30,
-      "step": 1,
-      "default": 12,
-      "unit": "px",
-      "label": "Slide border radius"
-    },
-    {
-      "type": "range",
-      "id": "padding",
-      "min": 0,
-      "max": 40,
-      "step": 2,
-      "default": 20,
-      "unit": "px",
-      "label": "Section padding (desktop)"
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "default": "#ffffff",
-      "label": "Section background"
-    },
-    {
-      "type": "color",
-      "id": "dot_active_color",
-      "default": "#f04f30",
-      "label": "Active dot / arrow color"
-    },
-    {
-      "type": "header",
-      "content": "Autoplay"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_autoplay",
-      "default": false,
-      "label": "Enable autoplay",
-      "info": "Pauses on hover, on user interaction, and when scrolled off-screen."
-    },
-    {
-      "type": "range",
-      "id": "autoplay_delay",
-      "min": 2000,
-      "max": 10000,
-      "step": 500,
-      "default": 5000,
-      "unit": "ms",
-      "label": "Autoplay delay"
-    },
-    {
-      "type": "header",
-      "content": "Misc"
-    },
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "slides_per_view_desktop", "min": 1, "max": 4, "step": 0.5, "default": 2.5, "label": "Slides per view (desktop)" },
+    { "type": "range", "id": "aspect_w", "min": 1, "max": 21, "step": 1, "default": 16, "label": "Aspect ratio width" },
+    { "type": "range", "id": "aspect_h", "min": 1, "max": 21, "step": 1, "default": 9, "label": "Aspect ratio height" },
+    { "type": "select", "id": "image_fit", "label": "Image fit", "default": "cover", "options": [ { "value": "cover", "label": "Cover" }, { "value": "contain", "label": "Contain" } ] },
+    { "type": "range", "id": "gap", "min": 0, "max": 40, "step": 2, "default": 20, "unit": "px", "label": "Gap between slides" },
+    { "type": "range", "id": "border_radius", "min": 0, "max": 30, "step": 1, "default": 12, "unit": "px", "label": "Slide border radius" },
+    { "type": "range", "id": "padding", "min": 0, "max": 40, "step": 2, "default": 20, "unit": "px", "label": "Section padding (desktop)" },
+    { "type": "color", "id": "background_color", "default": "#ffffff", "label": "Section background" },
+    { "type": "color", "id": "dot_active_color", "default": "#f04f30", "label": "Active dot / arrow color" },
+    { "type": "header", "content": "Autoplay" },
+    { "type": "checkbox", "id": "enable_autoplay", "default": false, "label": "Enable autoplay" },
+    { "type": "range", "id": "autoplay_delay", "min": 2000, "max": 10000, "step": 500, "default": 5000, "unit": "ms", "label": "Autoplay delay" },
+    { "type": "header", "content": "Misc" },
     { "type": "text", "id": "custom_class", "label": "Custom class" },
     { "type": "text", "id": "order_no", "label": "Mobile order number" }
   ],
