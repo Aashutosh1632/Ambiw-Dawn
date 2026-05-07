@@ -18,6 +18,21 @@
   .featured-carousel .swiper-slide { aspect-ratio: 16 / 9; }
   .featured-carousel .featured-card,
   .featured-carousel .featured-card-inner { height: 100%; }
+
+  /* Reserve slide WIDTH pre-Swiper-init to prevent the flash of full-width image
+     during the ~1s window before Swiper hydrates. Width is calc'd to match
+     Swiper's final size at slidesPerView:2.5 desktop / 1 mobile, spaceBetween:20/15. */
+  .featured-carousel:not(.swiper-initialized) .swiper-slide:first-child {
+    width: calc((100% - 40px) / 2.5);
+    max-width: calc((100% - 40px) / 2.5);
+    box-sizing: border-box;
+  }
+  @media (max-width: 768px) {
+    .featured-carousel:not(.swiper-initialized) .swiper-slide:first-child {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
 {%- endstyle -%}
 
 <div class="featured-carousel-wrapper {{ section.settings.custom_class }}">
